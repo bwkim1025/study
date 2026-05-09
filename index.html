@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>Study · 의학 심화 학습</title>
+<meta name="description" content="신장내과 + 인접 과목 — 매일 18:00 KST, 3일 사이클로 자동 작성되는 학습 브리핑">
+<meta name="theme-color" content="#0d2b6b">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Study">
+<meta name="application-name" content="Study">
+<meta name="mobile-web-app-capable" content="yes">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --panel:#ffffff; --panel-2:#f5f7fb; --line:#dde2ec;
+    --ink:#000000; --ink-2:#3a4252; --ink-3:#6a7388; --ink-4:#a0a8b8;
+    --navy:#0d2b6b; --navy-soft:rgba(13,43,107,0.06);
+    --amber:#a14d12; --amber-soft:rgba(161,77,18,0.08);
+    --rose:#9a2424; --rose-soft:rgba(154,36,36,0.08);
+    --sky:#1d6b5b; --sky-soft:rgba(29,107,91,0.08);
+    --plum:#5b3568; --plum-soft:rgba(91,53,104,0.08);
+    --mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;
+    --sans:'Pretendard Variable',Pretendard,-apple-system,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:13.5px; line-height:1.55; word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      linear-gradient(rgba(13,43,107,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(13,43,107,0.04) 1px, transparent 1px);
+    background-size:24px 24px,24px 24px;
+  }
+  body{padding-top:env(safe-area-inset-top);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 0 60px;}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 16px;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:10px;letter-spacing:0.08em;
+    color:var(--ink-3);text-transform:uppercase;background:var(--panel-2);
+  }
+  .top-l{display:flex;gap:14px;align-items:center;}
+  .pulse{
+    width:6px;height:6px;border-radius:50%;background:var(--navy);
+    animation:cwPulse 1.6s infinite;
+  }
+  @keyframes cwPulse{
+    0%{box-shadow:0 0 0 0 rgba(13,43,107,0.5);}
+    100%{box-shadow:0 0 0 7px rgba(13,43,107,0);}
+  }
+  .top-r{color:var(--navy);font-weight:600;}
+
+  .header{
+    padding:18px 16px 14px;border-bottom:1px solid var(--line);
+    background:#ffffff;position:relative;overflow:hidden;
+  }
+  .h-eyebrow{
+    font-family:var(--mono);font-size:10px;color:var(--navy);
+    letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .h-eyebrow::before{content:"";width:14px;height:1px;background:var(--navy);}
+  .h-title{
+    font-size:24px;font-weight:700;letter-spacing:-0.02em;
+    line-height:1.15;color:var(--ink);margin-bottom:8px;
+  }
+  .h-title .fade{color:var(--ink-3);font-weight:400;}
+  .h-meta{
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    font-family:var(--mono);font-size:10.5px;color:var(--ink-2);letter-spacing:0.06em;
+  }
+  .h-meta b{color:var(--ink);font-weight:600;}
+  .h-meta .sep{color:var(--ink-4);}
+  .h-meta .pill{
+    padding:2px 8px;border:1px solid var(--navy);color:var(--navy);
+    font-weight:600;
+  }
+  .h-ekg{
+    position:absolute;right:-20px;bottom:-2px;width:240px;height:60px;
+    opacity:0.45;pointer-events:none;
+  }
+
+  section{padding:18px 16px;border-bottom:1px solid var(--line);}
+  .label{
+    font-family:var(--mono);font-size:10px;color:var(--ink-3);
+    letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .label .count{color:var(--navy);}
+
+  /* calendar */
+  .calendar{background:var(--panel);border:1px solid var(--line);padding:12px 14px;}
+  .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .cal-title{font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:0.04em;}
+  .cal-nav{display:flex;gap:4px;}
+  .cal-btn{
+    width:24px;height:24px;border:1px solid var(--line);background:transparent;
+    color:var(--ink-3);display:grid;place-items:center;cursor:pointer;
+    font-family:var(--mono);font-size:12px;
+  }
+  .cal-btn:hover{border-color:var(--navy);color:var(--navy);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+  .cal-wd{
+    font-family:var(--mono);font-size:9px;color:var(--ink-4);
+    text-align:center;padding:5px 0;letter-spacing:0.1em;
+  }
+  .cal-day{
+    font-family:var(--mono);font-size:11px;height:28px;
+    display:grid;place-items:center;color:var(--ink-4);
+    position:relative;border:1px solid transparent;
+    transition:background 0.12s ease;
+  }
+  .cal-empty{height:28px;}
+  .cal-day.has{color:var(--ink);cursor:pointer;}
+  .cal-day.has:hover{background:var(--panel-2);}
+  .cal-day.has::after{
+    content:"";position:absolute;bottom:3px;width:3px;height:3px;background:var(--navy);
+  }
+  .cal-day.today{border-color:var(--navy);color:var(--navy);background:var(--navy-soft);}
+  .cal-day.today::after{background:var(--navy);}
+  .cal-day.is-selected{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .cal-day.is-selected::after{background:#fff;}
+
+  /* decision points */
+  .dp-list{display:flex;flex-direction:column;gap:1px;background:var(--line);}
+  .dp-item{
+    background:var(--panel);padding:10px 12px;
+    font-size:12.5px;line-height:1.5;color:var(--ink-2);
+    display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:start;
+    cursor:pointer;
+  }
+  .dp-item:hover{background:var(--panel-2);}
+  .tag{
+    font-family:var(--mono);font-size:9.5px;font-weight:700;
+    letter-spacing:0.1em;text-align:center;padding:2px 0;
+    border:1px solid currentColor;text-transform:uppercase;
+  }
+  .tag.now{color:var(--rose);background:var(--rose-soft);}
+  .tag.change{color:var(--navy);background:var(--navy-soft);}
+  .tag.ref{color:var(--ink-2);background:rgba(0,0,0,0.03);}
+  .tag.recur{color:var(--amber);background:var(--amber-soft);}
+
+  /* specialty */
+  .sp-head{
+    display:flex;align-items:baseline;gap:10px;
+    padding-bottom:8px;margin-bottom:10px;
+    border-bottom:1px solid var(--navy);
+  }
+  .sp-num{font-family:var(--mono);font-size:11px;color:var(--navy);letter-spacing:0.04em;font-weight:600;}
+  .sp-title{flex:1;font-size:15px;font-weight:700;letter-spacing:-0.01em;color:var(--ink);}
+  .sp-title small{color:var(--ink-3);font-weight:500;margin-left:6px;font-size:11px;}
+  .sp-sub{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:0.12em;text-transform:uppercase;}
+  .item{padding:11px 0;border-bottom:1px solid var(--line);}
+  .item:last-child{border-bottom:none;}
+  .item-head{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;cursor:pointer;}
+  .item-cat{
+    font-family:var(--mono);font-size:9.5px;font-weight:700;
+    letter-spacing:0.08em;text-transform:uppercase;
+    padding:2px 7px;align-self:start;border:1px solid;
+    margin-top:2px;
+  }
+  .item-cat.paper{color:var(--navy);border-color:var(--navy);background:var(--navy-soft);}
+  .item-cat.guide{color:var(--amber);border-color:rgba(161,77,18,0.4);background:var(--amber-soft);}
+  .item-cat.ins{color:var(--plum);border-color:rgba(91,53,104,0.4);background:var(--plum-soft);}
+  .item-cat.int{color:var(--rose);border-color:rgba(154,36,36,0.4);background:var(--rose-soft);}
+  .item-cat.drug{color:var(--sky);border-color:rgba(29,107,91,0.4);background:var(--sky-soft);}
+  .item-cat.safe{color:var(--rose);border-color:rgba(154,36,36,0.4);background:var(--rose-soft);}
+  .item-headline{font-size:13.5px;font-weight:600;line-height:1.4;letter-spacing:-0.01em;color:var(--ink);}
+  .item-summary{font-size:12px;color:var(--ink-2);line-height:1.55;margin-top:4px;}
+  .item-source{font-family:var(--mono);font-size:10px;color:var(--navy);margin-top:4px;letter-spacing:0.04em;}
+  .item-toggle{
+    font-family:var(--mono);font-size:11px;color:var(--ink-4);
+    width:22px;height:22px;display:grid;place-items:center;
+    border:1px solid var(--line);background:var(--panel);
+    transition:transform 0.18s ease;align-self:start;margin-top:2px;
+  }
+  .item.is-open .item-toggle{transform:rotate(90deg);color:var(--navy);border-color:var(--navy);}
+  .blocks{display:none;margin-top:9px;padding-left:46px;}
+  .item.is-open .blocks{display:flex;flex-direction:column;gap:6px;}
+  .block{background:var(--panel-2);padding:9px 11px;border-left:2px solid var(--line);}
+  .block.algo{border-left-color:var(--navy);}
+  .block.compare{border-left-color:var(--amber);}
+  .block.source{border-left-color:var(--ink-3);}
+  .block h4{
+    font-family:var(--mono);font-size:9.5px;color:var(--ink-3);
+    letter-spacing:0.14em;text-transform:uppercase;margin-bottom:5px;font-weight:700;
+  }
+  .block.algo h4{color:var(--navy);}
+  .block.compare h4{color:var(--amber);}
+  .block p,.block li{font-size:11.5px;line-height:1.55;color:var(--ink-2);}
+  .block ol,.block ul{padding-left:1.4em;}
+  .block ol li::marker{font-family:var(--mono);color:var(--navy);}
+  .block a{color:var(--navy);}
+
+  /* self-check */
+  .quiz{background:var(--panel);border:1px solid var(--line);padding:12px 14px;margin-bottom:8px;}
+  .quiz-q{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.5;}
+  .quiz-q::before{content:"Q. ";font-family:var(--mono);color:var(--navy);font-weight:700;}
+  .quiz-a{display:none;background:var(--navy-soft);padding:10px 12px;border-left:2px solid var(--navy);font-size:12px;color:var(--ink-2);line-height:1.55;margin-top:8px;}
+  .quiz.is-open .quiz-a{display:block;}
+  .quiz-toggle{
+    font-family:var(--mono);font-size:10px;color:var(--navy);cursor:pointer;
+    background:transparent;border:none;letter-spacing:0.1em;text-transform:uppercase;padding:0;
+  }
+  .quiz-toggle::before{content:"› ";}
+  .quiz.is-open .quiz-toggle::before{content:"▾ ";}
+
+  /* recall */
+  .recall-wrap{padding:18px 16px;border-bottom:none;}
+  .recall{
+    border:1px solid var(--navy);padding:14px;background:var(--navy-soft);
+  }
+  .recall-label{
+    font-family:var(--mono);font-size:10px;color:var(--navy);
+    letter-spacing:0.18em;text-transform:uppercase;
+    margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--navy);
+    display:flex;justify-content:space-between;
+  }
+  .recall ul{list-style:none;padding:0;}
+  .recall li{
+    font-size:12px;line-height:1.55;color:var(--ink-2);
+    padding:5px 0 5px 18px;position:relative;
+    border-bottom:1px dashed var(--line);
+  }
+  .recall li:last-child{border-bottom:none;}
+  .recall li::before{
+    content:"›";position:absolute;left:0;color:var(--navy);
+    font-family:var(--mono);font-weight:700;
+  }
+
+  /* state messages */
+  .state{padding:40px 20px;text-align:center;color:var(--ink-3);font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;}
+  .state-mark{font-size:24px;color:var(--navy);margin-bottom:10px;font-family:var(--mono);}
+
+  footer{
+    padding:18px 16px;text-align:center;
+    font-family:var(--mono);font-size:9.5px;color:var(--ink-4);
+    letter-spacing:0.18em;text-transform:uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="top-l">
+      <span class="pulse"></span>
+      <span id="status-text">online · workstation 02</span>
+    </div>
+    <div class="top-r">병우.MD</div>
+  </div>
+
+  <header class="header">
+    <div class="h-eyebrow" id="h-eyebrow">Daily Briefing · loading</div>
+    <h1 class="h-title">의학 심화 학습 <span class="fade">/ Study</span></h1>
+    <div class="h-meta" id="h-meta">
+      <b id="h-date">—</b>
+    </div>
+    <svg class="h-ekg" viewBox="0 0 240 60" fill="none">
+      <path d="M0 30 L60 30 L70 18 L80 42 L90 6 L102 50 L114 30 L160 30 L170 24 L180 36 L190 30 L240 30"
+        stroke="#0d2b6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </header>
+
+  <section>
+    <div class="label"><span id="cal-label">// calendar</span><span class="count" id="cal-count">—</span></div>
+    <div class="calendar">
+      <div class="cal-head">
+        <span class="cal-title" id="cal-title">—</span>
+        <div class="cal-nav">
+          <button class="cal-btn" id="cal-prev" type="button" aria-label="이전 달">‹</button>
+          <button class="cal-btn" id="cal-next" type="button" aria-label="다음 달">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+  </section>
+
+  <div id="content"></div>
+
+  <footer id="footer">study · loading…</footer>
+</div>
+
+<script>
+/* ============================================================
+ * Study PWA — 동적 마크다운 렌더 + GitHub 캘린더 + SW 등록
+ * ============================================================ */
+
+const REPO = 'bwkim1025/study';
+const CAT  = 'briefings';   // briefings/YYYY-MM-DD-dayN.md
+const SPECIALTIES = {
+  NEPHROLOGY:    { title: 'Nephrology',       sub: '신장내과' },
+  ENDOCRINOLOGY: { title: 'Endocrinology',    sub: '내분비 · 당뇨' },
+  CARDIOLOGY:    { title: 'Cardiology',       sub: '심혈관' },
+  INFECTIOUS:    { title: 'Infectious Disease', sub: '감염내과' },
+  PULMONOLOGY:   { title: 'Pulmonology',      sub: '호흡기' },
+  GASTROENTEROLOGY: { title: 'Gastroenterology', sub: '소화기 · 간' },
+  FAMILY:        { title: 'Family Medicine',  sub: '가정의학' },
+  RHEUMATOLOGY:  { title: 'Rheumatology',     sub: '류마티스' },
+  PSYCHIATRY:    { title: 'Psychiatry',       sub: '정신과' },
+  GERIATRICS:    { title: 'Geriatrics',       sub: '노년내과' },
+};
+
+/* ---------- helpers ---------- */
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function kstNow(){return new Date(Date.now()+9*3600*1000);}
+function kstDateStr(offsetDays){
+  const d=kstNow();d.setUTCDate(d.getUTCDate()-(offsetDays||0));
+  return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
+}
+function formatDate(ds){
+  if(!ds) return '—';
+  const [y,m,d]=ds.split('-').map(Number);
+  const dt=new Date(Date.UTC(y,m-1,d));
+  const wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][dt.getUTCDay()];
+  return y+'.'+String(m).padStart(2,'0')+'.'+String(d).padStart(2,'0')+' · '+wd;
+}
+
+/* ---------- inline md → html (very small subset) ---------- */
+function mdInline(s){
+  s=esc(s);
+  // links: [text](url)  AND bare URLs in [http://...] form
+  s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  s=s.replace(/\[(https?:\/\/[^\s\]]+)\]/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
+  s=s.replace(/(^|[\s>])(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  return s;
+}
+function mdBlock(text){
+  if(!text) return '';
+  const lines=text.split('\n');
+  const out=[]; let listType=null; let listBuf=[];
+  const flush=()=>{
+    if(listBuf.length){
+      out.push('<'+listType+'>'+listBuf.map(li=>'<li>'+mdInline(li)+'</li>').join('')+'</'+listType+'>');
+      listBuf=[];listType=null;
+    }
+  };
+  for(const ln of lines){
+    const ol=ln.match(/^\s*\d+\.\s+(.+)/);
+    const ul=ln.match(/^\s*[-*]\s+(.+)/);
+    if(ol){if(listType!=='ol'){flush();listType='ol';}listBuf.push(ol[1]);}
+    else if(ul){if(listType!=='ul'){flush();listType='ul';}listBuf.push(ul[1]);}
+    else if(ln.trim()===''){flush();}
+    else{flush();out.push('<p>'+mdInline(ln)+'</p>');}
+  }
+  flush();
+  return out.join('');
+}
+
+/* ---------- markdown parser tailored to our schema ---------- */
+function parseMarkdown(md){
+  const lines=md.split(/\r?\n/);
+  const result={
+    date:'', day:'', title:'',
+    decisionPoints:[], specialties:{}, specialtyOrder:[],
+    case_:null, selfCheck:[], recallCard:[],
+    author:'',
+  };
+  let mode=null;     // DECISION_POINTS | SPECIALTY | CASE | SELF_CHECK | RECALL_CARD | AUTHOR
+  let currentSp=null;
+  let currentItem=null;
+  let currentBlock=null;     // whyItMatters | abstract | keyResult | algorithm | compare | context | cautions | source
+  let currentQuiz=null;
+  let buffer=[];
+  const flushBuffer=()=>{
+    if(!buffer.length) return;
+    const txt=buffer.join('\n').replace(/^\s+|\s+$/g,'');
+    if(currentItem && currentBlock){
+      currentItem[currentBlock]=(currentItem[currentBlock]?currentItem[currentBlock]+'\n':'')+txt;
+    } else if(currentItem){
+      currentItem.summary=(currentItem.summary?currentItem.summary+'\n':'')+txt;
+    } else if(mode==='CASE' && result.case_){
+      result.case_.body=(result.case_.body?result.case_.body+'\n':'')+txt;
+    } else if(currentQuiz && currentBlock==='answer'){
+      currentQuiz.answer=(currentQuiz.answer?currentQuiz.answer+'\n':'')+txt;
+    } else if(mode==='AUTHOR'){
+      result.author=(result.author?result.author+' ':'')+txt;
+    }
+    buffer=[];
+  };
+
+  for(const raw of lines){
+    const line=raw;
+    // h1: # 2026-05-09 (Day 1)
+    const h1=line.match(/^#\s+(.+)/);
+    if(h1){
+      flushBuffer();
+      const t=h1[1].trim();
+      const dm=t.match(/(\d{4}-\d{2}-\d{2})/);
+      if(dm) result.date=dm[1];
+      const dn=t.match(/Day\s*(\d+)/i);
+      if(dn) result.day='Day '+dn[1];
+      continue;
+    }
+    // blockquote (title)
+    const bq=line.match(/^>\s+(.+)/);
+    if(bq){flushBuffer();result.title=bq[1].trim();continue;}
+    // h2 — section switch
+    const h2=line.match(/^##\s+(.+)/);
+    if(h2){
+      flushBuffer();
+      currentItem=null;currentBlock=null;currentQuiz=null;
+      const sec=h2[1].trim();
+      if(sec==='DECISION_POINTS')mode='DECISION_POINTS';
+      else if(/^SPECIALTY[_ ]/.test(sec)){mode='SPECIALTY';currentSp=sec.replace(/^SPECIALTY[_ ]/,'').trim();if(!result.specialties[currentSp]){result.specialties[currentSp]=[];result.specialtyOrder.push(currentSp);}}
+      else if(sec==='CASE'){mode='CASE';result.case_={headline:'',body:''};}
+      else if(sec==='SELF_CHECK')mode='SELF_CHECK';
+      else if(sec==='RECALL_CARD')mode='RECALL_CARD';
+      else if(sec==='AUTHOR')mode='AUTHOR';
+      else mode=null;
+      continue;
+    }
+    // h3
+    const h3=line.match(/^###\s+(.+)/);
+    if(h3){
+      flushBuffer();
+      const text=h3[1].trim();
+      if(mode==='SPECIALTY' && currentSp){
+        const m=text.match(/^(paper|guideline|insurance|drug|interaction|safety)\s*[:：]\s*(.+)/i);
+        currentItem={
+          cat: m?m[1].toLowerCase():'paper',
+          headline: m?m[2].trim():text,
+          summary:'', source:'',
+          whyItMatters:'', abstract:'', keyResult:'',
+          algorithm:'', compare:'', context:'', cautions:'',
+        };
+        result.specialties[currentSp].push(currentItem);
+        currentBlock=null;
+      } else if(mode==='CASE' && result.case_){
+        result.case_.headline=text;
+      } else if(mode==='SELF_CHECK'){
+        currentQuiz={q:text,answer:''};
+        result.selfCheck.push(currentQuiz);
+        currentBlock='q';
+      }
+      continue;
+    }
+    // h4 — block header
+    const h4=line.match(/^####\s+(.+)/);
+    if(h4){
+      flushBuffer();
+      const s=h4[1].toLowerCase().trim();
+      if(currentItem){
+        if(s.includes('어떤')||s.includes('연구')||s.startsWith('why')) currentBlock='whyItMatters';
+        else if(s.includes('초록')||s.startsWith('abstract')) currentBlock='abstract';
+        else if(s.includes('주요')||s.includes('결과')||s.includes('그림')||s.includes('표')||s.startsWith('key')||s.startsWith('figure')||s.startsWith('table')) currentBlock='keyResult';
+        else if(s.includes('알고리즘')||s.includes('적용')) currentBlock='algorithm';
+        else if(s.includes('국내')||s.includes('해외')||s.includes('비교')) currentBlock='compare';
+        else if(s.includes('금기')||s.includes('주의')||s.includes('caution')) currentBlock='cautions';
+        else if(s.startsWith('source')||s.includes('출처')) currentBlock='source';
+        else currentBlock='context';
+      } else if(currentQuiz){
+        if(s.includes('답')||s.startsWith('answer')||s.includes('해설')) currentBlock='answer';
+        else currentBlock='q';
+      }
+      continue;
+    }
+    if(line.trim()==='---') continue;
+    // DECISION_POINTS list items
+    if(mode==='DECISION_POINTS'){
+      const dp=line.match(/^\s*[-*]\s+(.+)/);
+      if(dp) result.decisionPoints.push(dp[1].trim());
+      continue;
+    }
+    // RECALL_CARD list items
+    if(mode==='RECALL_CARD'){
+      const rc=line.match(/^\s*[-*]\s+(.+)/);
+      if(rc) result.recallCard.push(rc[1].trim());
+      continue;
+    }
+    buffer.push(line);
+  }
+  flushBuffer();
+  return result;
+}
+
+/* ---------- tag chip helper ---------- */
+function tagChip(text){
+  // detect [즉시] / [변경] / [참고] / [재등장] at beginning
+  const m=text.match(/^\s*\[(즉시|변경|참고|재등장)\]\s*(.*)/);
+  if(!m) return {tag:'',rest:text};
+  const map={'즉시':['now','NOW'],'변경':['change','CHG'],'참고':['ref','REF'],'재등장':['recur','REC']};
+  const [cls,abbr]=map[m[1]]||['ref','REF'];
+  return {tag:'<span class="tag '+cls+'">'+abbr+'</span>', rest:m[2]};
+}
+
+/* ---------- render ---------- */
+const CAT_CLASS={paper:'paper',guideline:'guide',insurance:'ins',drug:'drug',interaction:'int',safety:'safe'};
+const CAT_ABBR ={paper:'paper',guideline:'guide',insurance:'ins',drug:'drug',interaction:'int',safety:'safe'};
+
+function renderItemBlocks(it){
+  const blocks=[];
+  if(it.whyItMatters) blocks.push('<div class="block"><h4>// why</h4>'+mdBlock(it.whyItMatters)+'</div>');
+  if(it.abstract)     blocks.push('<div class="block"><h4>// abstract</h4>'+mdBlock(it.abstract)+'</div>');
+  if(it.keyResult)    blocks.push('<div class="block"><h4>// key result</h4>'+mdBlock(it.keyResult)+'</div>');
+  if(it.algorithm)    blocks.push('<div class="block algo"><h4>// algorithm</h4>'+mdBlock(it.algorithm)+'</div>');
+  if(it.compare)      blocks.push('<div class="block compare"><h4>// 국내 vs 해외</h4>'+mdBlock(it.compare)+'</div>');
+  if(it.context)      blocks.push('<div class="block"><h4>// note</h4>'+mdBlock(it.context)+'</div>');
+  if(it.cautions)     blocks.push('<div class="block"><h4>// 금기 · 주의</h4>'+mdBlock(it.cautions)+'</div>');
+  if(it.source)       blocks.push('<div class="block source"><h4>// source</h4>'+mdBlock(it.source)+'</div>');
+  return blocks.join('');
+}
+
+function render(data){
+  // header chip update
+  document.getElementById('h-eyebrow').textContent='Daily Briefing'+(data.day?' · '+data.day:'');
+  document.getElementById('h-date').textContent=formatDate(data.date);
+  const meta=document.getElementById('h-meta');
+  meta.innerHTML='<b id="h-date">'+esc(formatDate(data.date))+'</b>';
+  if(data.title){meta.innerHTML+='<span class="sep">·</span><span>'+esc(data.title.replace(/^[^—:]*[—:]\s*/,''))+'</span>';}
+  meta.innerHTML+='<span class="sep">·</span><span class="pill">'+(data.specialtyOrder.length||0)+' SP</span>';
+
+  let html='';
+
+  // decision points
+  if(data.decisionPoints.length){
+    html+='<section><div class="label"><span>// decision_points</span><span class="count">'+data.decisionPoints.length+' active</span></div><div class="dp-list">';
+    data.decisionPoints.forEach((dp,i)=>{
+      const {tag,rest}=tagChip(dp);
+      html+='<div class="dp-item" data-dp-idx="'+i+'">'+tag+'<span>'+esc(rest)+'</span></div>';
+    });
+    html+='</div></section>';
+  }
+
+  // specialties
+  data.specialtyOrder.forEach((spKey,idx)=>{
+    const meta=SPECIALTIES[spKey]||{title:spKey,sub:''};
+    const items=data.specialties[spKey]||[];
+    html+='<section><div class="sp-head"><span class="sp-num">[' + String(idx+1).padStart(2,'0') + ']</span><div class="sp-title">'+esc(meta.title)+(meta.sub?'<small>'+esc(meta.sub)+'</small>':'')+'</div><span class="sp-sub">'+items.length+' items</span></div>';
+    items.forEach((it,ii)=>{
+      const cls=CAT_CLASS[it.cat]||'paper';
+      const abbr=CAT_ABBR[it.cat]||it.cat;
+      const hasBody=!!(it.whyItMatters||it.abstract||it.keyResult||it.algorithm||it.compare||it.context||it.cautions||it.source);
+      const headlineNoTags=it.headline.replace(/\[(즉시|변경|참고|재등장)\]/g,'').trim();
+      // first-line of summary as preview
+      const summaryFirst=(it.summary||'').split('\n').filter(s=>s.trim())[0]||'';
+      // separate source URL line (often inside summary)
+      const srcMatch=summaryFirst.match(/^[›\-\*\s]*([A-Z][^.]+?20\d{2}[^.]*)/);
+      html+='<div class="item" data-item-key="'+spKey+'-'+ii+'">'
+           +'<div class="item-head">'
+           +'<span class="item-cat '+cls+'">'+abbr+'</span>'
+           +'<div>'
+           +'<div class="item-headline">'+esc(headlineNoTags)+'</div>'
+           +(srcMatch?'<div class="item-source">› '+esc(srcMatch[1])+'</div>':'')
+           +(summaryFirst?'<div class="item-summary">'+mdInline(summaryFirst)+'</div>':'')
+           +'</div>'
+           +'<button class="item-toggle" type="button" aria-label="펼치기">›</button>'
+           +'</div>'
+           +(hasBody?'<div class="blocks">'+renderItemBlocks(it)+'</div>':'')
+           +'</div>';
+    });
+    html+='</section>';
+  });
+
+  // case
+  if(data.case_ && (data.case_.headline||data.case_.body)){
+    html+='<section><div class="label"><span>// case</span></div>'
+         +'<div class="item">'
+         +'<div class="item-headline">'+esc(data.case_.headline)+'</div>'
+         +(data.case_.body?'<div class="block" style="margin-top:8px;">'+mdBlock(data.case_.body)+'</div>':'')
+         +'</div></section>';
+  }
+
+  // self-check
+  if(data.selfCheck.length){
+    html+='<section><div class="label"><span>// self_check</span><span class="count">'+data.selfCheck.length+' Q</span></div>';
+    data.selfCheck.forEach((q,i)=>{
+      html+='<div class="quiz" data-quiz-idx="'+i+'">'
+           +'<div class="quiz-q">'+esc(q.q)+'</div>'
+           +(q.answer?'<button class="quiz-toggle" type="button">정답·해설 보기</button><div class="quiz-a">'+mdBlock(q.answer)+'</div>':'')
+           +'</div>';
+    });
+    html+='</section>';
+  }
+
+  // recall card
+  if(data.recallCard.length){
+    html+='<div class="recall-wrap"><div class="recall">'
+         +'<div class="recall-label"><span>// recall.card</span><span style="color:var(--ink-3);">'+data.recallCard.length+' lines</span></div>'
+         +'<ul>'+data.recallCard.map(l=>'<li>'+mdInline(l)+'</li>').join('')+'</ul>'
+         +'</div></div>';
+  }
+
+  document.getElementById('content').innerHTML=html;
+
+  // footer
+  const footerBits=['study','v.'+(data.date||'—').replace(/-/g,'.')];
+  if(data.author){footerBits.push(data.author.split('·').slice(0,1).join('').trim());}
+  document.getElementById('footer').textContent=footerBits.join(' · ');
+
+  attachInteractivity();
+}
+
+function attachInteractivity(){
+  document.querySelectorAll('.item .item-head').forEach(head=>{
+    head.addEventListener('click',(e)=>{
+      // ignore link clicks
+      if(e.target.closest('a')) return;
+      head.parentElement.classList.toggle('is-open');
+    });
+  });
+  document.querySelectorAll('.quiz .quiz-toggle').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      btn.parentElement.classList.toggle('is-open');
+      btn.textContent = btn.parentElement.classList.contains('is-open') ? '정답·해설 접기' : '정답·해설 보기';
+    });
+  });
+  // decision-point click → scroll to matching item & open
+  document.querySelectorAll('.dp-item').forEach(dp=>{
+    dp.addEventListener('click',()=>{
+      const text=dp.textContent.trim();
+      const tokens=text.replace(/(NOW|CHG|REF|REC)/g,'').toLowerCase().split(/\s+/).filter(t=>t.length>2).slice(0,3);
+      const items=document.querySelectorAll('.item');
+      let target=null;
+      for(const it of items){
+        const hl=(it.querySelector('.item-headline')||{}).textContent||'';
+        if(tokens.some(t=>hl.toLowerCase().includes(t))){target=it;break;}
+      }
+      if(target){
+        target.classList.add('is-open');
+        target.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  });
+}
+
+/* ============================================================
+ * Calendar — GitHub API + raw markdown fetch
+ * ============================================================ */
+const SUFFIXES=['.md','-day1.md','-day2.md','-day3.md'];
+const CAL={viewYear:0,viewMonth:0,available:new Set(),selectedDate:null};
+
+async function loadDates(){
+  const cacheKey='briefings-list-study';
+  try{
+    const cached=localStorage.getItem(cacheKey);
+    if(cached){const{ts,dates}=JSON.parse(cached);if(Date.now()-ts<1800000){CAL.available=new Set(dates);return;}}
+  }catch(e){}
+  try{
+    const r=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+CAT);
+    if(r.ok){
+      const items=await r.json();const dates=new Set();
+      for(const it of items){const m=it.name && it.name.match(/^(\d{4}-\d{2}-\d{2})/);if(m) dates.add(m[1]);}
+      CAL.available=dates;
+      try{localStorage.setItem(cacheKey,JSON.stringify({ts:Date.now(),dates:[...dates]}));}catch(e){}
+    }
+  }catch(e){}
+}
+
+function renderCal(){
+  const y=CAL.viewYear, m=CAL.viewMonth;
+  const fd=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
+  const today=kstDateStr(0);
+  const grid=document.getElementById('cal-grid');
+  if(!grid) return;
+  let html='';
+  for(const w of ['S','M','T','W','T','F','S']) html+='<div class="cal-wd">'+w+'</div>';
+  for(let i=0;i<fd;i++) html+='<div class="cal-empty"></div>';
+  let marked=0;
+  for(let d=1;d<=dim;d++){
+    const ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const has=CAL.available.has(ds);
+    if(has) marked++;
+    let cls='cal-day'+(has?' has':'')+(ds===today?' today':'')+(ds===CAL.selectedDate?' is-selected':'');
+    html+='<div class="'+cls+'" data-date="'+ds+'">'+String(d).padStart(2,'0')+'</div>';
+  }
+  grid.innerHTML=html;
+  document.getElementById('cal-title').textContent=y+'.'+String(m+1).padStart(2,'0');
+  document.getElementById('cal-label').textContent='// calendar.'+['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][m]+'.'+y;
+  document.getElementById('cal-count').textContent=marked+' marked';
+  grid.querySelectorAll('.cal-day.has').forEach(el=>{
+    el.addEventListener('click',async()=>{
+      const ds=el.dataset.date;
+      CAL.selectedDate=ds;renderCal();
+      await loadAndRender(ds);
+    });
+  });
+}
+
+async function fetchMd(ds){
+  for(const sfx of SUFFIXES){
+    try{
+      const r=await fetch('https://raw.githubusercontent.com/'+REPO+'/main/'+CAT+'/'+ds+sfx);
+      if(r.ok) return await r.text();
+    }catch(e){}
+  }
+  return null;
+}
+
+async function fetchLatest(){
+  const sorted=[...CAL.available].sort().reverse();
+  for(const ds of sorted){const md=await fetchMd(ds);if(md) return {date:ds,md};}
+  for(let i=0;i<14;i++){const ds=kstDateStr(i);const md=await fetchMd(ds);if(md) return {date:ds,md};}
+  return null;
+}
+
+async function loadAndRender(dateStr){
+  const el=document.getElementById('content');
+  el.innerHTML='<div class="state"><div class="state-mark">···</div>loading briefing…</div>';
+  try{
+    let result;
+    if(dateStr){const md=await fetchMd(dateStr);if(md) result={date:dateStr,md};}
+    else result=await fetchLatest();
+    if(!result){
+      el.innerHTML='<div class="state"><div class="state-mark">∅</div>아직 학습 브리핑이 없습니다<br><span style="color:var(--ink-4);font-size:10px;letter-spacing:0.08em;text-transform:none;margin-top:8px;display:block;">briefings/YYYY-MM-DD-dayN.md 가 생성되면 여기에 표시됩니다.</span></div>';
+      return;
+    }
+    if(!CAL.selectedDate){CAL.selectedDate=result.date;renderCal();}
+    render(parseMarkdown(result.md));
+  }catch(e){
+    el.innerHTML='<div class="state"><div class="state-mark">!</div>로드 실패<br><span style="font-size:10px;color:var(--ink-4);">'+esc(e.message)+'</span></div>';
+  }
+}
+
+async function init(){
+  const t=kstNow();
+  CAL.viewYear=t.getUTCFullYear();
+  CAL.viewMonth=t.getUTCMonth();
+  await loadDates();
+  renderCal();
+  document.getElementById('cal-prev').addEventListener('click',()=>{
+    CAL.viewMonth--;if(CAL.viewMonth<0){CAL.viewMonth=11;CAL.viewYear--;}renderCal();
+  });
+  document.getElementById('cal-next').addEventListener('click',()=>{
+    CAL.viewMonth++;if(CAL.viewMonth>11){CAL.viewMonth=0;CAL.viewYear++;}renderCal();
+  });
+  await loadAndRender();
+}
+
+init();
+
+/* service worker */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
