@@ -89,8 +89,11 @@
     font-weight:600;
   }
   .h-ekg{
-    position:absolute;right:-20px;bottom:-2px;width:240px;height:60px;
-    opacity:0.45;pointer-events:none;
+    position:absolute;right:14px;top:14px;width:120px;height:30px;
+    opacity:0.4;pointer-events:none;
+  }
+  @media(max-width:480px){
+    .h-ekg{width:90px;height:22px;right:12px;top:12px;opacity:0.35;}
   }
 
   section{padding:18px 16px;border-bottom:1px solid var(--line);}
@@ -139,10 +142,24 @@
   .dp-item{
     background:var(--panel);padding:10px 12px;
     font-size:12.5px;line-height:1.5;color:var(--ink-2);
-    display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:start;
+    display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:start;
     cursor:pointer;
   }
   .dp-item:hover{background:var(--panel-2);}
+  .dp-item.is-open{background:var(--panel-2);}
+  .dp-caret{
+    font-family:var(--mono);font-size:11px;color:var(--ink-4);
+    align-self:start;margin-top:1px;transition:transform 0.18s ease;
+  }
+  .dp-item.is-open .dp-caret{transform:rotate(90deg);color:var(--navy);}
+  .dp-text{min-width:0;}
+  .dp-body{
+    display:none;grid-column:2/4;margin-top:10px;padding-top:10px;
+    border-top:1px dashed var(--line);
+    flex-direction:column;gap:6px;
+  }
+  .dp-item.is-open .dp-body{display:flex;}
+  .dp-body-empty{font-family:var(--mono);font-size:10px;color:var(--ink-4);letter-spacing:0.08em;text-transform:uppercase;}
   .tag{
     font-family:var(--mono);font-size:9.5px;font-weight:700;
     letter-spacing:0.1em;text-align:center;padding:2px 0;
@@ -532,7 +549,7 @@ function render(data){
     html+='<section><div class="label"><span>// decision_points</span><span class="count">'+data.decisionPoints.length+' active</span></div><div class="dp-list">';
     data.decisionPoints.forEach((dp,i)=>{
       const {tag,rest}=tagChip(dp);
-      html+='<div class="dp-item" data-dp-idx="'+i+'">'+tag+'<span>'+esc(rest)+'</span></div>';
+      html+='<div class="dp-item" data-dp-idx="'+i+'">'+tag+'<span class="dp-text">'+esc(rest)+'</span><span class="dp-caret">›</span></div>';
     });
     html+='</div></section>';
   }
@@ -620,21 +637,39 @@ function attachInteractivity(){
       btn.textContent = btn.parentElement.classList.contains('is-open') ? '정답·해설 접기' : '정답·해설 보기';
     });
   });
-  // decision-point click → scroll to matching item & open
+  // decision-point click → expand inline (accordion). The matched item's body is
+  // injected once on first interaction, then click toggles is-open.
   document.querySelectorAll('.dp-item').forEach(dp=>{
-    dp.addEventListener('click',()=>{
-      const text=dp.textContent.trim();
-      const tokens=text.replace(/(NOW|CHG|REF|REC)/g,'').toLowerCase().split(/\s+/).filter(t=>t.length>2).slice(0,3);
+    if(!dp.querySelector('.dp-body')){
+      const text=(dp.querySelector('.dp-text')||{}).textContent||dp.textContent;
+      const tokens=text.toLowerCase().split(/\s+/).filter(t=>t.length>2).slice(0,3);
       const items=document.querySelectorAll('.item');
-      let target=null;
+      let matched=null;
       for(const it of items){
         const hl=(it.querySelector('.item-headline')||{}).textContent||'';
-        if(tokens.some(t=>hl.toLowerCase().includes(t))){target=it;break;}
+        if(tokens.some(t=>hl.toLowerCase().includes(t))){matched=it;break;}
       }
-      if(target){
-        target.classList.add('is-open');
-        target.scrollIntoView({behavior:'smooth',block:'start'});
+      const body=document.createElement('div');
+      body.className='dp-body';
+      if(matched){
+        const headline=matched.querySelector('.item-headline');
+        const source=matched.querySelector('.item-source');
+        const summary=matched.querySelector('.item-summary');
+        const blocks=matched.querySelector('.blocks');
+        let inner='';
+        if(headline)inner+='<div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">'+headline.innerHTML+'</div>';
+        if(source)inner+='<div style="font-family:var(--mono);font-size:10px;color:var(--navy);letter-spacing:0.04em;margin-bottom:6px;">'+source.innerHTML+'</div>';
+        if(summary)inner+='<div style="font-size:11.5px;color:var(--ink-2);line-height:1.55;margin-bottom:6px;">'+summary.innerHTML+'</div>';
+        if(blocks)inner+=blocks.innerHTML;
+        body.innerHTML=inner;
+      } else {
+        body.innerHTML='<div class="dp-body-empty">// 매칭되는 항목 없음</div>';
       }
+      dp.appendChild(body);
+    }
+    dp.addEventListener('click',(e)=>{
+      if(e.target.closest('a')) return;
+      dp.classList.toggle('is-open');
     });
   });
 }
