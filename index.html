@@ -637,18 +637,53 @@ function attachInteractivity(){
       btn.textContent = btn.parentElement.classList.contains('is-open') ? '정답·해설 접기' : '정답·해설 보기';
     });
   });
-  // decision-point click → expand inline (accordion). The matched item's body is
-  // injected once on first interaction, then click toggles is-open.
+  // decision-point click → expand inline (accordion).
+  // Matching: extract distinctive tokens (English drug/abbrev names, capitalized
+  // nouns, numbers) from the DP text, score each specialty item's headline+
+  // summary+source by overlap, pick the highest-scoring item. Common Korean
+  // particles and short generic words are ignored.
+  function tokenizeForMatch(s){
+    if(!s) return new Set();
+    const out=new Set();
+    // English/alphanumeric tokens (case-insensitive), e.g. SGLT2i, KDIGO,
+    // Tacrolimus, eGFR, UACR, NEJM, MASH, voriconazole
+    const en=s.match(/[A-Za-z][A-Za-z0-9-]{1,}/g)||[];
+    for(const t of en) out.add(t.toLowerCase());
+    // Hangul nouns 3 chars+ (avoid particles like 에서/으로/까지/하기)
+    const ko=s.match(/[가-힣]{3,}/g)||[];
+    const STOPWORDS=new Set([
+      '에서','으로','부터','까지','하기','대비','경우','이상','이하','미만',
+      '경구','동시','시작','오늘','이전','이후','관련','대한','대해','한다',
+      '한다는','한다고','된다','되었다','한다면','때문에','때문','같은','다른',
+      '이번','이때','지난','다음','오늘은','오늘의','학습','적용','참고','즉시','변경','재등장'
+    ]);
+    for(const t of ko) if(!STOPWORDS.has(t)) out.add(t);
+    return out;
+  }
+  function scoreOverlap(setA, text){
+    if(!setA.size) return 0;
+    const setB=tokenizeForMatch(text);
+    let s=0;
+    for(const t of setB) if(setA.has(t)) s++;
+    return s;
+  }
+
   document.querySelectorAll('.dp-item').forEach(dp=>{
     if(!dp.querySelector('.dp-body')){
       const text=(dp.querySelector('.dp-text')||{}).textContent||dp.textContent;
-      const tokens=text.toLowerCase().split(/\s+/).filter(t=>t.length>2).slice(0,3);
+      const dpTokens=tokenizeForMatch(text);
       const items=document.querySelectorAll('.item');
-      let matched=null;
-      for(const it of items){
-        const hl=(it.querySelector('.item-headline')||{}).textContent||'';
-        if(tokens.some(t=>hl.toLowerCase().includes(t))){matched=it;break;}
-      }
+      let bestItem=null, bestScore=0;
+      items.forEach(it=>{
+        const headline=(it.querySelector('.item-headline')||{}).textContent||'';
+        const summary =(it.querySelector('.item-summary') ||{}).textContent||'';
+        const source  =(it.querySelector('.item-source')  ||{}).textContent||'';
+        // headline matches count double (most distinctive)
+        const sc=2*scoreOverlap(dpTokens,headline)+scoreOverlap(dpTokens,summary)+scoreOverlap(dpTokens,source);
+        if(sc>bestScore){bestScore=sc;bestItem=it;}
+      });
+      // require at least 1 distinct token match to avoid random pairing
+      const matched=bestScore>=1?bestItem:null;
       const body=document.createElement('div');
       body.className='dp-body';
       if(matched){
@@ -663,7 +698,7 @@ function attachInteractivity(){
         if(blocks)inner+=blocks.innerHTML;
         body.innerHTML=inner;
       } else {
-        body.innerHTML='<div class="dp-body-empty">// 매칭되는 항목 없음</div>';
+        body.innerHTML='<div class="dp-body-empty">// 매칭되는 항목 없음 — 본문 SPECIALTY 섹션에서 확인</div>';
       }
       dp.appendChild(body);
     }
