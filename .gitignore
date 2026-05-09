@@ -1,0 +1,17 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Node / build (없겠지만 미래 대비)
+node_modules/
+dist/
+.cache/
+
+# Logs
+*.log
+
+# Env
+.env
+.env.local
