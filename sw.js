@@ -4,7 +4,7 @@
 //   - Icons / manifest / static images: Cache-first
 //
 // BASE is auto-detected from the worker's own location.
-const CACHE_VERSION = 'study-v10';
+const CACHE_VERSION = 'study-v11';
 
 // /repo-name/sw.js  ->  /repo-name/
 const BASE = new URL('./', self.location).pathname;
