@@ -49,12 +49,16 @@ Then map to the day's specialty group:
 | 3 | FAMILY, RHEUMATOLOGY, PSYCHIATRY, GERIATRICS |
 
 ## Step 2 — Read editorial principles (canonical format spec)
-Read `C:\Users\USER\Documents\GitHub\study\EDITORIAL-PRINCIPLES.md`. Section 7 (마크다운 구조) is the canonical format spec — follow it exactly. If the file disagrees with this prompt, follow the file (it may have been updated).
+Read `C:\Users\USER\Documents\GitHub\study\EDITORIAL-PRINCIPLES.md`. Sections 5 (writing flow), 6 (DP↔SPECIALTY matching rule — CRITICAL), and 8 (markdown structure) are canonical — follow them exactly. If the file disagrees with this prompt, follow the file (it may have been updated).
+
+Authoring order (do not skip step 0):
+- **Step 0** — write the SPECIALTY items first (3 specialties × 6 categories = 18 items on Day 1/2, or 4 × 6 = 24 on Day 3).
+- **Step 1** — pick the 12~18 highest-impact items and condense each into a one-line DECISION_POINT. Each DP MUST share at least 1~2 distinctive tokens (drug name, trial name, agency/guideline name) with its source SPECIALTY headline so the PWA's auto-matcher pairs them correctly. See EDITORIAL-PRINCIPLES.md §6 for examples.
 
 Required sections in order:
 1. `# YYYY-MM-DD (Day N)` h1 with date and Day N
 2. `> <one-line title>` blockquote (e.g., "본인 학습용 — Day 1: 신장 · 내분비/당뇨 · 심혈관")
-3. `## DECISION_POINTS` — 9~15 bullet items, each with `[즉시]` / `[변경]` / `[참고]` / `[재등장]` tag prefix. One per item below, sorted [즉시] → [변경] → [참고] → [재등장].
+3. `## DECISION_POINTS` — **12~18** bullet items, each with `[즉시]` / `[변경]` / `[참고]` / `[재등장]` tag prefix, sorted `[즉시]` → `[변경]` → `[참고]` → `[재등장]`. Each line must include the matching SPECIALTY item's distinctive English keyword(s) (drug/trial/agency name). One SPECIALTY item may produce 0~2 DPs.
 4. `## SPECIALTY_<KEY>` for each specialty in the day's group (3 sections on Day 1/2, 4 on Day 3). Each MUST contain exactly 6 items in this order with this exact h3 prefix syntax:
    - `### paper: <headline>` — top-tier journal paper
    - `### guideline: <headline>` — clinical guideline change
@@ -62,9 +66,9 @@ Required sections in order:
    - `### drug: <headline>` — new drug / approval / indication
    - `### interaction: <headline>` — drug-drug interaction relevant for inpatient cross-prescribing
    - `### safety: <headline>` — black-box / recall / safety alert
-5. `## CASE` (optional, ~once per week — typically Day 1) — single hypothetical clinical scenario, `### <case headline>` then prose body
-6. `## SELF_CHECK` — 2 or 3 questions in `### Q1.` form, each followed by `#### 답·해설` block
-7. `## RECALL_CARD` — 8~10 single-line takeaway bullets
+5. `## CASE` (optional, ~once per week — typically Day 1) — single hypothetical clinical scenario, `### <case headline>` followed by 1~2 paragraphs of natural prose (병력·검사·감별진단·의사결정 woven into prose, no bold markers required). Mention which SPECIALTY item it ties to. Must end with the disclaimer: "(가상 시나리오, 실제 환자 정보 아님)".
+6. `## SELF_CHECK` — 2 or 3 questions in `### Q1.` / `### Q2.` form. Body is multiple-choice options on separate lines (e.g., `a) ...`, `b) ...`, `c) ...`), then `#### 답·해설` block with the correct option in **bold** (`**b)**`) and a 1~2 sentence rationale.
+7. `## RECALL_CARD` — **8~10** single-line takeaway bullets
 8. `## AUTHOR` — `<Model name> · <model-id> · <YYYY-MM-DD HH:MM KST>`
 
 Item structure rules:
@@ -77,6 +81,7 @@ Item structure rules:
   - **interaction** → `#### 적용 알고리즘`, `#### 출처`
   - **safety** → `#### 적용 알고리즘`, `#### 출처`
 - Item headlines should NOT include `[즉시]`-style tags. Tags appear only in DECISION_POINTS.
+- Item headlines SHOULD include the distinctive English keyword(s) (drug/trial/agency) that the matching DP references — this enables the PWA's accordion to find the right item.
 
 ## Step 3 — Source content via web search
 Search recent (last 30 days preferred) Korean and international sources for each specialty in the day's group. Priority sources:
@@ -88,9 +93,11 @@ Search recent (last 30 days preferred) Korean and international sources for each
 For `interaction` and `safety` items: prioritize clinically actionable cross-specialty issues (입원 환자에서 신·간 기능별 용량 조정, QT 연장 약물 조합, 신독성, CYP3A4 강력 저해/유도, 면역억제제 모니터링 등).
 
 ## Step 4 — Write the markdown file
-Construct the full markdown following the format spec above. Length target: total file ~5,000~7,500 characters of body content. Per item 200~400 chars on expanded body. Decision points list ~9~15 items.
+Construct the full markdown following the format spec above. Length target: total file ~5,000~7,500 characters of body content. Per item 200~400 chars on expanded body. Decision points list **12~18** items (more for Day 3 with 4 specialties).
 
 `재등장` tag rule: if a topic was covered within the past 30 days AND has a new development today, mark it `[재등장]`. Check by reading recent files in `briefings/` matching the past 30 days.
+
+**PWA accordion matching (CRITICAL):** When the user taps a DECISION_POINT in the PWA, an inline accordion expands the matching SPECIALTY item's body in place. Matching is automatic, based on shared distinctive tokens (English drug/trial/agency names) between the DP line and the SPECIALTY headline+summary+source. If a DP shares no distinctive token with any SPECIALTY headline, it will show "매칭되는 항목 없음". Therefore: every DP must reference its source SPECIALTY item's distinctive keywords verbatim.
 
 ## Step 5 — Save and commit
 1. Write the file to: `C:\Users\USER\Documents\GitHub\study\briefings\YYYY-MM-DD-dayN.md` (use Linux mount path if needed: `/sessions/<id>/mnt/study/briefings/...`).
