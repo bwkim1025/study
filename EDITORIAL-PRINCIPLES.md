@@ -6,46 +6,56 @@
 
 **"오늘 의료계는 어떻게 변했나" → "내 임상이 이렇게 바뀐다"** 까지 연결하는 능동적 학습 자료. 단순 큐레이션이 아니라 적용 알고리즘과 셀프체크까지.
 
-## 1. 시간 우선순위
+## 1. 시간 윈도우 — 6개월
 
-- **1순위 (필수):** 24시간 이내 발생·발표·공시된 이벤트
-- **2순위 (조건부):** 전일 발표·공시 (KST 기준)
-- **3순위 (제한적):** 24시간 이상 지난 사건이라도 새 진전(추가 보도·정책 반응·발언 추가)이 오늘 있으면 가능
+**최근 6개월 내 발표·공시·갱신된 것**을 모두 후보로 삼는다. 발표 시점은 우선순위 결정 요소가 아니다 — **중요도(§2 Tier 시스템)** 우선이고, 그 다음 신선도. 6개월 지난 토픽은 새 진전(추가 분석·정책 반응·국내 적용 등)이 있을 때만 재등장 가능.
 
-학술지·가이드라인은 자연스럽게 주 단위 사이클이라 위 1·2순위를 너무 엄격히 적용하지 않아도 됨. 다만 본문에 정확한 일자(예: "5월 7일 오전", "5월 6일 종가", "직전 분기")를 명시할 것. 모호한 표현 ("최근", "한동안", "근래") 지양.
+본문에 정확한 일자(예: "2025년 11월 발표", "2026-03-12 식약처 공시")를 명시할 것. 모호한 표현 ("최근", "한동안", "근래") 지양.
 
-## 2. 재등장 규칙
+## 2. 중요도 Tier 시스템 (필수, 가장 중요)
 
-- **30일 내** 같은 과목에서 다룬 토픽이 **새 진전**(추가 보도·정책 반응·가격 변동·발언 추가 등)이 있을 때만 재등장
-- 단순 재언급("어제 발표된 X")은 제외
-- 작성 시 `briefings/` 폴더의 최근 30일 파일을 읽어 중복 확인
+각 항목 후보를 Tier S → A → B로 분류한 뒤, 회차 슬롯을 **Tier S 우선으로 채우고 부족하면 A → B 순서**로 채운다.
 
-## 3. 과목 그룹핑 (3일 사이클)
+| Tier | 기준 | 예시 |
+|---|---|---|
+| **S — 반드시 포함** | 임상 처방을 즉시 변경할 만함 + 국내 적용 가능 (또는 6개월 내 도입 임박) | 식약처 신약 승인, 심평원 급여 변경, 국내 학회(KSN·KSE·KDA 등) 가이드라인 갱신, KDIGO/ESC/ACC major update 중 국내 도입 임박, FDA black-box 강화로 국내도 즉시 모니터링 변경 |
+| **A — 강력 권고** | 권고 강도 변경 + 6개월 내 국내 적용 가능 | 적응증 확대, focused update, KDIGO/ADA/ESC의 새 권고가 국내 도입 검토 중, phase 3 RCT primary endpoint positive로 차기 가이드라인 반영 예상 |
+| **B — 참고** | 학술적 가치 있으나 임상 적용은 1년+ 또는 적용 안 됨 | 인접 분야 RCT, mechanism study, negative trial, review article, 국내 도입 미정 신약 phase 2 결과 |
+
+작성자(LLM)는 **각 카테고리별로 후보 3~5개를 모두 Tier 분류한 뒤 최고 Tier 항목을 선택**해야 한다. 본문에 Tier를 명시할 필요는 없으나, 후보 검토 과정은 의식적으로 거칠 것.
+
+## 3. 재등장 규칙 — 90일
+
+- **90일 내** 같은 과목에서 다룬 토픽이 **새 진전**(추가 보도·정책 반응·가격 변동·발언 추가 등)이 있을 때만 재등장
+- 단순 재언급("3개월 전 발표된 X")은 제외
+- 작성 시 `briefings/` 폴더의 최근 90일 파일을 모두 읽어 동일 토픽 확인 (drug name, trial name, agency name 키워드 대조)
+
+## 4. 과목 그룹핑 (3일 사이클)
 
 | Day | 과목 그룹 | 항목 수 |
 |---|---|---|
-| **Day 1** | 신장내과(NEPHROLOGY) · 내분비/당뇨(ENDOCRINOLOGY) · 심혈관(CARDIOLOGY) | 3 × 7 = 21 |
-| **Day 2** | 감염내과(INFECTIOUS) · 호흡기(PULMONOLOGY) · 소화기/간(GASTROENTEROLOGY) | 3 × 7 = 21 |
-| **Day 3** | 가정의학(FAMILY) · 류마티스(RHEUMATOLOGY) · 정신과(PSYCHIATRY) · 노년내과(GERIATRICS) | 4 × 7 = 28 |
+| **Day 1** | **신장내과(NEPHROLOGY) ×2** + 내분비/당뇨(ENDOCRINOLOGY) + 심혈관(CARDIOLOGY) | 14 + 7 + 7 = **28** |
+| **Day 2** | 감염내과(INFECTIOUS) + 호흡기(PULMONOLOGY) + 소화기/간(GASTROENTEROLOGY) | 7 + 7 + 7 = **21** |
+| **Day 3** | 가정의학(FAMILY) + 류마티스(RHEUMATOLOGY) + 정신과(PSYCHIATRY) + 노년내과(GERIATRICS) | 7 + 7 + 7 + 7 = **28** |
 
 앵커: 2026-05-09 = Day 1. `daysFromAnchor = (today_KST - 2026-05-09).days`, `dayN = (daysFromAnchor % 3) + 1`.
 
-## 4. 과목별 7개 카테고리
+**신장 2배 처리 (Day 1만):** 본인 전공이라 Day 1에서 신장내과는 각 카테고리를 2개씩 작성 — paper ×4, guideline ×2, insurance ×2, drug ×2, interaction ×2, safety ×2 = 14 항목. Day 2/3에는 신장 별도 섹션 없음.
 
-| # | 카테고리 | 개수 | 무엇 |
-|---|---|---|---|
-| 1 | `paper` | **2** | 최근 주요 논문 — top-tier 저널(NEJM·Lancet·JAMA·KI·Circulation 등). 두 paper는 서로 다른 주제·임상 의미여야 함 (예: positive trial + negative/안전성 trial, 또는 내 분과 핵심 + 인접 분야) |
-| 2 | `guideline` | 1 | 진료 가이드라인 변화 — 국내(KSN·KSE 등) + 해외(KDIGO·ACC/AHA 등) |
-| 3 | `insurance` | 1 | 보험심사 변경 — 심평원 고시·급여 기준 변경 |
-| 4 | `drug` | 1 | 신약 정보 — 식약처/FDA 승인, 적응증 확대, 약가 등재 |
-| 5 | `interaction` | 1 | 약물 상호작용 — 입원 환자 다과 처방에서 위험 조합·대체 |
-| 6 | `safety` | 1 | 안전성 경보 — 식약처/FDA black-box·자진 회수·금기 추가 |
+## 5. 과목별 카테고리 구성
 
-→ 한 과목당 **7 항목** (paper 2 + 나머지 5 카테고리 1개씩).
+| # | 카테고리 | Day 1 신장 | 다른 모든 과목 | 무엇 |
+|---|---|---|---|---|
+| 1 | `paper` | **4** | **2** | 최근 주요 논문 (NEJM·Lancet·JAMA·KI·Circulation 등). 두 paper는 서로 다른 주제·임상 의미 (positive trial + safety/negative trial, 또는 본 분과 핵심 + 인접 분야) |
+| 2 | `guideline` | 2 | 1 | 진료 가이드라인 변화 — 국내(KSN·KSE 등) + 해외(KDIGO·ACC/AHA 등) |
+| 3 | `insurance` | 2 | 1 | 보험심사 변경 — 심평원 고시·급여 기준 |
+| 4 | `drug` | 2 | 1 | 신약 정보 — 식약처/FDA 승인, 적응증 확대 |
+| 5 | `interaction` | 2 | 1 | 약물 상호작용 — 입원 환자 다과 처방 위험 |
+| 6 | `safety` | 2 | 1 | 안전성 경보 — 식약처/FDA black-box·자진 회수 |
 
-해당 카테고리에 그날 신규 사항이 없으면 헤드라인을 `(이번 회차 신규 사항 없음)`으로 적고 본문 생략. 억지로 채우지 말 것. paper도 두 개째가 없으면 한 개만 적어도 됨.
+해당 카테고리에 6개월 내 Tier S/A 후보가 없고 B만 있으면 B를 채우되, B마저 없으면 헤드라인을 `(이번 회차 신규 사항 없음)`으로 적고 본문 생략. 억지로 채우지 말 것.
 
-## 5. 카테고리별 펼친 분량 가이드
+## 6. 카테고리별 펼친 분량 가이드
 
 | 카테고리 | 필수 블록 | 분량 |
 |---|---|---|
@@ -56,105 +66,86 @@
 | interaction | 위험 조합 + 기전 + 대체 + 적용 알고리즘 + 출처 | 중간 (각 블록 1~2문장) |
 | safety | 무엇·왜·언제부터 + 적용 알고리즘 + 출처 | 짧게 (총 2~3문장) |
 
-전체 회차 분량 목표: **본문 6,000~9,000자**. 책상에서 0.5~1시간 안에 소화 가능한 양. 늘리지 말 것.
+전체 회차 분량 목표:
+- **Day 1**: 본문 8,000~11,000자 (28 항목, 신장 2배)
+- **Day 2/3**: 본문 6,000~9,000자
 
-## 6. 마크다운 구조 (필수 형식)
+책상에서 0.5~1시간(Day 1은 1~1.5시간) 안에 소화 가능한 양. 늘리지 말 것.
+
+## 7. 마크다운 구조 (필수 형식)
 
 ```markdown
 # 2026-05-09 (Day 1)
-> 본인(병우, 신장내과) 개인 학습용 — Day 1: 신장 · 내분비/당뇨 · 심혈관
+> 본인(병우, 신장내과) 개인 학습용 — Day 1: 신장×2 · 내분비/당뇨 · 심혈관
 
 ## SPECIALTY_NEPHROLOGY
-### paper: SGLT2i, CKD stage 4에서도 신기능 보존 (NEJM 2026-05)
-eGFR 20~30 환자에서도 통계적으로 유의한 신기능 보존 확인.
-#### 어떤 연구
-...
-#### 초록
-...
-#### 주요 결과
-- 1차 결과: eGFR slope -1.8 vs -3.6 mL/min/y (p<0.001)
-- 2차 결과: 투석 진입률 12% vs 19% (HR 0.62)
-#### 적용 알고리즘
-1. eGFR 20~30 + DM2 환자 외래 시 SGLT2i 추가 검토
-2. 처방 시작 1개월 후 eGFR + electrolyte + lactate 체크
-3. 볼륨 감소 환자는 이뇨제 25~50% 감량 동시
-#### 국내 vs 해외
-KDIGO 2026: eGFR 20까지 권고 / KSN 2025: eGFR 30까지. 국내 처방 시 심평원 삭감 위험.
-#### 출처
-- NEJM 2026-05 [https://www.nejm.org/doi/...]
+### paper: SGLT2i, CKD stage 4에서도 신기능 보존 (NEJM 2025-12)
+... (각 블록)
 
-### paper: Tirzepatide vs Dulaglutide, 고위험 CKD에서 신장 사건 33% 감소 (SURPASS-CVOT)
-SURPASS-CVOT 사전분석. ASCVD + T2DM에서 head-to-head로 평가, 신장 outcome도 포함.
-#### 어떤 연구
+### paper: Finerenone in T1DM + CKD (NEJM 2025-09)
 ...
-#### 초록
+
+### paper: Tolvaptan, ADPKD에서 5년 follow-up 결과 (KI 2026-01)
 ...
-#### 주요 결과
+
+### paper: AKI 후 CKD 진행, novel biomarker validation (JASN 2026-02)
 ...
-#### 적용 알고리즘
-...
-#### 국내 vs 해외
-...
-#### 출처
-- ...
 
 ### guideline: KDIGO 2026 — albuminuria target 50→30
+...
+
+### guideline: KSN 2026 — eGFR 보정 인종 계수 폐지
 ...
 
 ### insurance: SGLT2i 급여 기준 변경 (2026-06-01 시행)
 ...
 
-### drug: Aficamten FDA 승인 — HFpEF
+### insurance: ESA 사용 기준 갱신 (Hb 11.5→11.0)
+...
+
+### drug: Aficamten 국내 도입 검토
+...
+
+### drug: Vadadustat 신청 단계
 ...
 
 ### interaction: Tacrolimus + voriconazole — 30% 감량
 ...
 
+### interaction: SGLT2i + 이뇨제 — 볼륨 감소 위험
+...
+
 ### safety: Tolvaptan FDA black-box 강화
 ...
 
+### safety: Iohexol — eGFR 30 미만 절대 금기
+...
+
 ## SPECIALTY_ENDOCRINOLOGY
-... (위와 같은 7개 항목 구조: paper × 2 + 나머지 5 카테고리)
+... (7개 항목: paper × 2 + 나머지 5 카테고리)
 
 ## SPECIALTY_CARDIOLOGY
-...
+... (7개 항목)
 
 ## CASE
 ### 65세 남성, eGFR 28 + DM type 2 + EF 35%
-65세 남성, 6년 전 DM2 진단, 4년 전 CKD stage 4 진행. 6개월 전부터 호흡곤란 NYHA II~III, EF 35% 확인. 외래 방문 시 Cr 2.4, K+ 4.8, ACE 사용 중. SGLT2i 추가 검토 중인데 eGFR 28에서 KSN 가이드라인 미준수 우려와 KDIGO 2026 신규 권고 사이에서 결정해야 함. 본 케이스는 본 회차 paper 항목과 직결되며, 적용 알고리즘 1단계가 그대로 적용된다 — 환자 동의 + 사유 차트 명시 후 처방 시작 + 1개월 모니터링. (가상 시나리오, 실제 환자 정보 아님)
+...본 케이스는 본 회차 paper 1번 항목과 직결... (가상 시나리오, 실제 환자 정보 아님)
 
 ## SELF_CHECK
-### Q1. eGFR 22인 환자에 SGLT2i를 추가할 때 가장 적절한 모니터링 계획은?
-a) 1주 후 BUN/Cr만
-b) 1개월 후 eGFR + electrolyte + lactate
-c) 6개월 후 albuminuria만
+### Q1. ...
 #### 답·해설
-**b)** 1개월 후 eGFR + electrolyte + lactate. 이유: 초기 eGFR dip은 보통 1개월 내 발생, 케톤산증·전해질 이상 동반 가능. 1주는 너무 이르고 6개월은 너무 늦음.
+**b)** ...
 
 ### Q2. ...
 #### 답·해설
 ...
 
 ## RECALL_CARD
-- SGLT2i — eGFR 20까지 처방 가능 (KDIGO 2026 / KSN 30까지)
-- Tirzepatide — SURPASS-CVOT에서 dulaglutide 대비 신장 사건 33% 감소
-- HbA1c — 75세 이상 frail은 7.5 목표
-- HFpEF — Aficamten 신규 승인, EF 50~60% 적응
-- Tacrolimus + voriconazole — 30% 감량 필수
-- Tolvaptan — black-box 갱신, LFT 4주 간격
-- Finerenone — 1·4·이후 4개월 K+/eGFR 모니터링
-- SGLT2i 급여 — 2026-06-01부터 eGFR 30 이상 + UACR ≥200 필수
+- (8~10줄)
 
 ## AUTHOR
 Claude Opus 4.7 · claude-opus-4-7 · 2026-05-09 18:00 KST
 ```
-
-## 7. 분량 목표
-
-- 한 회차 21 항목(Day 1/2) 또는 28 항목(Day 3) + CASE 0~1 + SELF_CHECK 2~3 + RECALL_CARD 8~10
-- 총 본문 6,000~9,000자
-- 책상에서 0.5~1시간 안에 소화 가능한 양
-- 늘리지 말 것
 
 ## 8. SELF_CHECK 형식 가이드
 
@@ -182,7 +173,7 @@ Claude Opus 4.7 · claude-opus-4-7 · 2026-05-09 18:00 KST
 ```
 
 - 첫 토큰: 사람이 읽기 쉬운 모델명 (예: `Claude Opus 4.7`, `Claude Sonnet 4.6`)
-- 둘째 토큰: API에서 사용된 정확한 모델 ID (예: `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5-20251001`)
+- 둘째 토큰: API에서 사용된 정확한 모델 ID
 - 셋째 토큰: 작성 시각 (KST, `YYYY-MM-DD HH:MM KST`)
 
 **자기 식별:** 스케줄드 태스크는 자신이 실행 중인 모델 ID를 시스템 컨텍스트(env)에서 읽어 적는다. 모델 ID를 임의로 만들지 말 것. 확실하지 않으면 사람이 읽는 이름만 적고 ID 자리는 `(미확인)`로 표시.
@@ -190,10 +181,11 @@ Claude Opus 4.7 · claude-opus-4-7 · 2026-05-09 18:00 KST
 ## 11. 품질 기준 (non-negotiable)
 
 - 모든 사실 주장(연구 결과, 가이드라인 수치, 규제 일자, 약물명)은 실제로 인용 가능한 웹 소스에서 와야 함. 통계·논문 제목·시험명을 **fabricate 금지**.
-- 한 과목의 한 카테고리에 30일 내 신규 사항 없으면 헤드라인 `(이번 회차 신규 사항 없음)`으로 두고 본문 생략. 억지로 채우지 말 것.
+- 한 카테고리에 6개월 내 후보가 전혀 없으면 헤드라인 `(이번 회차 신규 사항 없음)`으로 두고 본문 생략. 억지로 채우지 말 것.
 - 한국 의학 용어 우선. 약물명: 표준 약어(SGLT2i, GLP-1 RA, ACEi 등) 번역 없이 사용 가능.
 - 숫자, p-value, 신뢰구간은 소스에 보고된 그대로 정확히. 소스가 반올림한 경우에만 반올림.
 - 선정성 표현 ("획기적", "혁명적" 등) 회피. 임상 톤 유지.
+- **Tier 분류는 후보 비교의 도구이지, 본문에 표시하지 않는다** — 사용자에게는 깔끔한 항목 리스트만 보임.
 
 ## 12. 파일명 규칙
 
@@ -202,4 +194,4 @@ Claude Opus 4.7 · claude-opus-4-7 · 2026-05-09 18:00 KST
 
 ---
 
-> 작성: 2026-05-09 | 정비: 2026-05-09 (DECISION_POINTS 섹션 제거 + paper 카테고리 2개로 확장)
+> 작성: 2026-05-09 | 정비: 2026-05-09 (6개월 윈도우 + 3-Tier 중요도 + Day 1 신장 2배 + 90일 중복)
