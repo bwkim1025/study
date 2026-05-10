@@ -111,11 +111,29 @@ Per item 200~400 chars on expanded body.
 
 The PWA renders SPECIALTY sections in the order they appear, with each item collapsible (click to expand the body blocks). Headlines should stand alone — the user skims headlines, then taps to deep-read.
 
-## Step 5 — Save and commit
-1. Write the file to: `C:\Users\USER\Documents\GitHub\study\briefings\YYYY-MM-DD-dayN.md` (use Linux mount path if needed: `/sessions/<id>/mnt/study/briefings/...`).
-2. Use bash to: `cd` into the repo, create a git branch named `claude/study-YYYYMMDD-dayN`, `git add` the new file, `git commit -m "Study briefing YYYY-MM-DD (Day N)"`, `git push -u origin <branch>`.
-3. Use the GitHub CLI (`gh pr create`) to open a pull request titled `Study briefing YYYY-MM-DD (Day N)` against `main`. If the repo has `.github/workflows/auto-merge-briefing.yml`, PRs from `claude/`-prefixed branches will auto-merge. Otherwise the user merges manually.
+## Step 5 — Save and push (GitHub Contents API, NOT git push)
+The scheduled-task sandbox has no persistent GitHub credentials, so `git push` and `gh` will both fail. Push the file directly through the GitHub Contents API instead:
+
+1. Write the file to: `C:\Users\USER\Documents\GitHub\study\briefings\YYYY-MM-DD-dayN.md` (Linux mount path: `/sessions/<id>/mnt/study/briefings/...`).
+
+2. Run the helper script — it reads the PAT from `./.github-token`, base64-encodes the file, PUTs it to `https://api.github.com/repos/bwkim1025/study/contents/briefings/YYYY-MM-DD-dayN.md` on the `main` branch, and syncs the local working copy:
+   ```bash
+   cd /sessions/<id>/mnt/study
+   python3 scripts/push-briefing.py briefings/YYYY-MM-DD-dayN.md "Study briefing YYYY-MM-DD (Day N)"
+   ```
+   On success the script prints `OK: created|updated <path> → commit <sha>` and the GitHub blob URL.
+
+3. If push fails (HTTP 401/403 → token bad or expired; HTTP 404 → token lacks Contents:write on the repo), abort the run and surface the error to the user rather than retrying. Do NOT fall back to `git push` — it will not work.
+
 4. Log success and the published URL `https://bwkim1025.github.io/study/` in the run output.
+
+### One-time setup (already done if `.github-token` exists at the repo root)
+- Create a fine-grained PAT on GitHub: Settings → Developer settings → Fine-grained personal access tokens.
+  - Repository access: only `bwkim1025/study`
+  - Repository permissions: **Contents: Read and write**, Metadata: Read
+  - Expiration: 1 year
+- Save the token (one line, no trailing newline) to `C:\Users\USER\Documents\GitHub\study\.github-token`. The file is `.gitignore`d.
+- Confirm `scripts/push-briefing.py` exists and is executable.
 
 ## Self-identification (AUTHOR field)
 Read your own model from the env section of your system prompt at runtime. Format: `<human-readable name> · <api-model-id> · <YYYY-MM-DD HH:MM KST>`. Examples:
@@ -125,14 +143,4 @@ Read your own model from the env section of your system prompt at runtime. Forma
 If the model id cannot be determined with certainty, use `(미확인)` for the id token but still provide your best human-readable name.
 
 ## Quality bar (non-negotiable)
-- All factual claims (study results, guideline numbers, regulatory dates, drug names) must come from a real, citable web source. Do NOT fabricate statistics, paper titles, or trial names.
-- If a category has no fresh content for a specialty in the past 30 days, write `(이번 회차 신규 사항 없음)` as that one item's headline and omit its expanded body — do NOT invent material to fill the slot.
-- Korean medical terminology preferred. Drug names: standard abbreviations OK (SGLT2i, GLP-1 RA, ACEi 등) without translation.
-- Be precise with numbers, p-values, confidence intervals when reported in the source. Round only when source rounds.
-- Avoid sensational language ("획기적", "혁명적" 등). Stick to clinical tone.
-
-## Constraints (strict)
-- Write ONLY to `briefings/`. Do NOT touch root `index.html`, `sw.js`, `manifest.json`, `EDITORIAL-PRINCIPLES.md`, or any other infrastructure file.
-- The CASE section is hypothetical — no real patient data, no PHI.
-- If web search fails or returns insufficient results across multiple specialties, abort the run and report the failure rather than producing a low-quality briefing.
-```
+- All factual claims (study results, guideline numbers, regulatory dates, drug names) must come from a real, citable web source. Do NOT fabricate statistics, paper title
