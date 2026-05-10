@@ -645,10 +645,12 @@ async function loadDates(){
   const cacheKey='briefings-list-study';
   try{
     const cached=localStorage.getItem(cacheKey);
-    if(cached){const{ts,dates}=JSON.parse(cached);if(Date.now()-ts<1800000){CAL.available=new Set(dates);return;}}
+    // 2-minute TTL (was 30min) so newly-pushed briefings appear quickly without manual cache clear
+    if(cached){const{ts,dates}=JSON.parse(cached);if(Date.now()-ts<120000){CAL.available=new Set(dates);return;}}
   }catch(e){}
   try{
-    const r=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+CAT);
+    // Cache-bust query string forces browser HTTP cache to refetch the listing
+    const r=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+CAT+'?_='+Date.now(),{cache:'no-store'});
     if(r.ok){
       const items=await r.json();const dates=new Set();
       for(const it of items){const m=it.name && it.name.match(/^(\d{4}-\d{2}-\d{2})/);if(m) dates.add(m[1]);}
