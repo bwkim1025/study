@@ -493,6 +493,31 @@ function parseMarkdown(md){
       }
       continue;
     }
+    // Fallback block headers inside an item (generator sometimes emits these instead of h4):
+    //   **어떤 연구** 본문...   |   어떤 연구: 본문...
+    if(currentItem){
+      let lbl=null, rest='';
+      const mb=line.match(/^\*\*([^*]{1,30})\*\*[::]?\s*(.*)$/);
+      const mp=mb?null:line.match(/^([가-힣A-Za-z0-9 ·⋅×/()\-]{1,18})[::]\s+(.*)$/);
+      if(mb){lbl=mb[1];rest=mb[2];} else if(mp){lbl=mp[1];rest=mp[2];}
+      if(lbl){
+        const s=lbl.toLowerCase().replace(/[::]\s*$/,'').trim();
+        const KNOWN=/어떤|연구|무엇|초록|주요|결과|그림|알고리즘|적용|국내|해외|비교|금기|주의|출처|변경|위험|기전|대체|적응증|함의|용량|근거|영향|의미|시행|^why|^abstract|^key|^source/;
+        if(KNOWN.test(s) && !/^[a-e]\)$|답|해설/.test(s)){
+          flushBuffer();
+          if(s.includes('어떤')||s.includes('연구')||s.includes('무엇')||s.startsWith('why')) currentBlock='whyItMatters';
+          else if(s.includes('초록')||s.startsWith('abstract')) currentBlock='abstract';
+          else if(s.includes('주요')||s.includes('결과')||s.includes('그림')||s.startsWith('key')) currentBlock='keyResult';
+          else if(s.includes('알고리즘')||s.includes('적용')) currentBlock='algorithm';
+          else if(s.includes('국내')||s.includes('해외')||s.includes('비교')) currentBlock='compare';
+          else if(s.includes('금기')||s.includes('주의')) currentBlock='cautions';
+          else if(s.includes('출처')||s.startsWith('source')) currentBlock='source';
+          else currentBlock='context';
+          if(rest.trim()) buffer.push(rest.trim());
+          continue;
+        }
+      }
+    }
     if(line.trim()==='---') continue;
     // DECISION_POINTS list items
     if(mode==='DECISION_POINTS'){
