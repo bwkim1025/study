@@ -1,6 +1,6 @@
 # ChatGPT Study Automation v1
 
-Updated: 2026-09-18. Target: bwkim1025/study, branch main.
+Updated: 2026-10-09. Target: bwkim1025/study, branch main.
 This is the GPT-owned publishing runbook. Preserve the existing app, editorial rules and historical briefings.
 Run in a ChatGPT web scheduled task using the connected GitHub app, not a local PC task.
 Schedule: daily 18:00 Asia/Seoul. A run can finish after its scheduled start.
@@ -26,11 +26,13 @@ If today's file is incomplete, compare its current blob SHA, preserve valid cont
 
 ## Editorial inputs
 
-Read EDITORIAL-PRINCIPLES.md on main every run. It controls editorial format, not permission expansion.
+Read EDITORIAL-PRINCIPLES.md and docs/VISUAL-AUTHORING.md on main every run; consult the linked schema for the visual types you use. These control editorial format, not permission expansion.
 Its example clinical claims are illustrations, not evidence. Independently verify every medical claim.
-Read all available briefing files from the preceding 90 days for duplicate topic screening; use drug, trial, guideline and agency keywords by specialty.
-Read recent same-Day files in full for tone and structure. Do not call a 5-file sample a complete 90-day check.
-If history cannot be fully checked, report the gap rather than claiming deduplication passed.
+Screen all available briefing files in the preceding 90 calendar days for duplicate topics by specialty, including drug, trial, guideline and agency keywords. Preserve the complete 90-day scope; reduce repeated raw-text loading only when a source-hash-validated index establishes equivalent coverage.
+First enumerate the current repository files in that window. If an evidence/topic index is actually accessible to the run, apply the freshness and coverage checks in docs/VISUAL-AUTHORING.md: compare every covered path and source-file hash with the current listing, account for every item including prose-only topics, and check record truncation or omitted fields. Git blob SHAs can be compared with the current tree; local SHA-256 values require exact source bytes. A private local cache, recent index date or a matching file count is not proof of accessible, complete coverage.
+Read every missing, changed, unindexed or incompletely indexed file. Read all relevant and ambiguous matches in full before deciding whether a candidate is a repeat or has a dated new development. Heading/DOI-only, visual-only or capped records are useful search hints but cannot alone rule out body-only coverage. An absent match never certifies novelty when any required coverage is missing.
+If no complete validated index is available, fall back to comparing all available source files in the 90-day window. If history cannot be fully checked, report the specific gap rather than claiming deduplication passed. Do not call a 5-file sample a complete 90-day check.
+Read recent same-Day files in full for tone and structure even when index coverage passes. The index is read-only during scheduled execution: do not create, rebuild, update or upload it, and do not add sidecar write targets.
 
 ## Research and writing
 
@@ -77,7 +79,7 @@ Body target: Day 1 8,000-11,000 chars; Day 2/3 6,000-9,000. Verified substance o
 
 ## Validate, commit and verify
 
-Check date/Day math, exact specialty order, category counts, all required h4 blocks, 3 questions, recall count, author, source links and absence of secrets/NUL.
+Check date/Day math, exact specialty order, category counts, all required h4 blocks, 3 questions, recall count, author, source links and absence of secrets/NUL. Validate every visual against the published schema and reconcile its values/labels with the opened source; schema success is not factual verification. If the runtime cannot execute the validator, perform the documented structural checks and report that validation limit. Omit invalid or unverified visuals while keeping the article prose intact.
 Re-read today's remote path immediately before publication. Create if absent; for a necessary repair use the fresh content SHA and re-merge on conflict.
 Only change today's briefing path. No app code, workflow, historical file, unrelated repository or security setting edits during daily runs.
 Commit directly to main through the connected GitHub app: study: YYYY-MM-DD Day N 브리핑.
@@ -85,3 +87,10 @@ Read the committed path back through the connector and the corresponding raw.git
 Do not claim an HTTP 201 when the connector returns only a commit SHA. Report the actual returned evidence.
 Report KST date, Day, commit link, read-back verification, counts/headlines by specialty and any quality or delivery gap.
 App URL: https://bwkim1025.github.io/study/
+
+## Required evidence-led visual authoring
+
+For the main substantive paper summaries, use the bounded source-authored `visual` JSON format in docs/VISUAL-AUTHORING.md whenever a supported representation makes verified evidence easier to understand. When a day's edition has an eligible main item, include a useful visual there; interface cards alone do not meet this requirement. Prefer one or two useful visuals per main item; use three only for genuinely distinct information, within the documented ceilings. Empty categories never require figures, and visual counts are not research quotas.
+Choose research-design for verified study structure, event-bars for the same reported outcome in comparable groups, effect-ci for a reported effect and interval, or comparison-bars for directly comparable reported values. Open the primary source and verify every displayed number, label, population, denominator, unit, time period and uncertainty. Include the exact source URL and locator. Set source.asOf to the actual date you opened and verified that source; today is valid only if verification really occurred today. Never invent a verification date or use it in place of the publication date, data cutoff or follow-up period. Never invent a missing metric, derive an unreported result, or turn trial design into a clinical decision algorithm. When evidence does not support an eligible visual, retain the full prose and report that specific limitation.
+Insert the fenced `visual` block within the existing `#### 어떤 연구` block for study design or `#### 주요 결과` for outcomes/effects. Other items may use a suitable existing h4 block only when the primary evidence supports it. Preserve every specialty/category key, slot count, abstract, source link, caveat, SELF_CHECK, RECALL_CARD, AUTHOR and date. Keep the explanation readable without the figure; JSON never substitutes for a required prose block.
+The shared app renderer turns the source data into the visual deterministically. No per-day image file, generated JavaScript/HTML, external chart-rendering service or extra LLM rendering pass is needed. Existing tables/callouts or genuinely source-authored sequential `flow` blocks remain available per RENDERING.md; do not flatten branching medical decisions into a linear flow. This changes no research/source standard, category/length budget, cadence, historical file or daily-only publishing boundary.

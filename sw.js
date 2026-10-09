@@ -1,99 +1,140 @@
-// Study PWA Service Worker
-// Cache strategy:
-//   - HTML / Markdown: Network-first (always latest briefings, fall back to cache offline)
-//   - Icons / manifest / static images: Cache-first
-//
-// BASE is auto-detected from the worker's own location.
-const CACHE_VERSION = 'study-v13';
+// Study PWA: network-first reading, cache-first app assets.
+// Cache Storage is shared by every app on an origin. Never search or clear it
+// globally: a sibling GitHub Pages app must keep its own offline content.
+const BASE = new URL('./', self.location.href).pathname;
+const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
+const CACHE_VERSION = `${CACHE_PREFIX}v15`;
+const ASSET_VERSION = '?v=14';
+const RAW_ORIGIN = 'https://raw.githubusercontent.com';
+const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
 
-// /repo-name/sw.js  ->  /repo-name/
-const BASE = new URL('./', self.location).pathname;
-
-const PRECACHE = [
-  BASE,
-  BASE + 'index.html',
-  BASE + 'manifest.json',
-  BASE + 'apple-touch-icon.png',
-  BASE + 'icon-192.png',
-  BASE + 'icon-512.png',
-  BASE + 'icon-512-maskable.png',
-  BASE + 'icon.svg',
-  BASE + 'icon-maskable.svg',
-  BASE + 'favicon.ico',
-];
+const APP_SHELL = [BASE, BASE + 'index.html'];
+const VISUAL_ASSETS = ['assets/content-visuals.js', 'assets/content-visuals.css']
+  .map((path) => BASE + path + '?v=15');
+const PRECACHE_ASSETS = [
+  'manifest.json',
+  'apple-touch-icon.png',
+  'icon-192.png',
+  'icon-512.png',
+  'icon-512-maskable.png',
+  'icon.svg',
+  'icon-maskable.svg',
+  'favicon.ico',
+].map((path) => BASE + path + ASSET_VERSION).concat(VISUAL_ASSETS);
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) =>
-      // Add each URL individually so a single missing optional asset
-      // (e.g. a category not yet built) doesn't fail the entire install.
-      Promise.all(
-        PRECACHE.map((url) =>
-          cache.add(url).catch((err) => {
-            console.warn('[sw] precache skip', url, err && err.message);
-          })
-        )
-      )
-    ).then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_VERSION);
+    // Keep the previous worker if the shell or its visual renderer cannot load.
+    await cache.addAll([...APP_SHELL, ...VISUAL_ASSETS]);
+    await Promise.all(PRECACHE_ASSETS.filter((url) => !VISUAL_ASSETS.includes(url)).map((url) =>
+      cache.add(url).catch((error) => {
+        console.warn('[study sw] optional precache skipped', url, error.message);
+      })
+    ));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    // v13 used an unscoped cache name. Only the actual deployed /study/ worker
+    // may remove that exact legacy cache; previews and sibling apps cannot.
+    const canRemoveLegacy =
+      self.location.origin === 'https://bwkim1025.github.io' &&
+      BASE === '/study/' &&
+      self.registration.scope === 'https://bwkim1025.github.io/study/';
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((key) =>
+      (key.startsWith(CACHE_PREFIX) && key !== CACHE_VERSION) ||
+      (canRemoveLegacy && key === 'study-v13')
+    ).map((key) => caches.delete(key)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
-  const url = new URL(req.url);
+async function readCache(request) {
+  try {
+    const cache = await caches.open(CACHE_VERSION);
+    return await cache.match(request);
+  } catch (_) {
+    // A storage restriction must not prevent a successful network request.
+    return undefined;
+  }
+}
 
-  // Only handle our own origin (within BASE) + raw briefing fetches from GitHub
+async function saveResponse(request, response) {
+  if (!response || !response.ok) return;
+  try {
+    const cache = await caches.open(CACHE_VERSION);
+    await cache.put(request, response.clone());
+  } catch (_) {
+    // Quota/private-browsing failures are non-fatal.
+  }
+}
+
+function unavailable(isMarkdown) {
+  return new Response(
+    isMarkdown ? 'This briefing is not available offline.' : 'This resource is not available offline.',
+    { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } }
+  );
+}
+
+async function networkFirst(request, { isNavigation, isMarkdown }) {
+  try {
+    const response = await fetch(request);
+    // A host's SPA/404 fallback must never be cached or rendered as a briefing.
+    if (isMarkdown && /text\/html/i.test(response.headers.get('Content-Type') || '')) {
+      return new Response('The briefing could not be loaded as Markdown.', {
+        status: 502,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' },
+      });
+    }
+    await saveResponse(request, response);
+    return response;
+  } catch (_) {
+    const cached = await readCache(request);
+    if (cached) return cached;
+    // Only a real page navigation can use the app shell. Markdown, images,
+    // JSON and ordinary HTML fetches must never receive index.html instead.
+    if (isNavigation && !isMarkdown) {
+      const shell = await readCache(BASE + 'index.html') || await readCache(BASE);
+      if (shell) return shell;
+    }
+    return unavailable(isMarkdown);
+  }
+}
+
+async function cacheFirst(request) {
+  const cached = await readCache(request);
+  if (cached) return cached;
+  try {
+    const response = await fetch(request);
+    await saveResponse(request, response);
+    return response;
+  } catch (_) {
+    return unavailable(false);
+  }
+}
+
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
   const isOurApp = url.origin === self.location.origin && url.pathname.startsWith(BASE);
-  const isBriefingRaw = url.hostname === 'raw.githubusercontent.com';
+  const isBriefingRaw = url.origin === RAW_ORIGIN &&
+    url.pathname.startsWith(RAW_BRIEFINGS) && url.pathname.endsWith('.md');
   if (!isOurApp && !isBriefingRaw) return;
 
-  // Network-first for HTML and markdown (always latest)
-  if (
-    req.destination === 'document' ||
-    url.pathname.endsWith('.html') ||
-    url.pathname.endsWith('.md') ||
-    isBriefingRaw
-  ) {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          if (res && res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE_VERSION).then((c) => c.put(req, copy)).catch(() => {});
-          }
-          return res;
-        })
-        .catch(() =>
-          caches.match(req).then((c) => c || caches.match(BASE + 'index.html'))
-        )
-    );
-    return;
+  const isMarkdown = url.pathname.endsWith('.md');
+  const isNavigation = request.mode === 'navigate' || request.destination === 'document';
+  if (isNavigation || isMarkdown || url.pathname.endsWith('.html')) {
+    event.respondWith(networkFirst(request, { isNavigation, isMarkdown }));
+  } else {
+    event.respondWith(cacheFirst(request));
   }
-
-  // Cache-first for icons / manifest / static
-  event.respondWith(
-    caches.match(req).then((cached) =>
-      cached ||
-      fetch(req).then((res) => {
-        if (res && res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE_VERSION).then((c) => c.put(req, copy)).catch(() => {});
-        }
-        return res;
-      })
-    )
-  );
 });
