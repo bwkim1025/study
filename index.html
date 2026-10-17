@@ -78,14 +78,6 @@ summary::-webkit-details-marker{display:none}
 .section-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:18px}
 .section-heading h2{margin:3px 0 0;font-size:23px;letter-spacing:-.7px;line-height:1.4}
 .section-heading p{font-size:12px;color:var(--ink-3);margin:0}
-.overview{margin-bottom:30px}
-.overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.overview-card{display:flex;flex-direction:column;padding:20px 21px;background:white;border:1px solid var(--line);border-radius:15px;text-decoration:none;color:var(--ink);box-shadow:0 3px 7px #132d4603;min-height:174px;transition:transform .15s,border-color .15s}
-.overview-card:hover{transform:translateY(-2px);border-color:#83bdb9}
-.overview-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-3);margin-bottom:14px}
-.overview-card strong{font-size:15px;font-weight:650;line-height:1.65;letter-spacing:-.25px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.overview-bottom{display:flex;justify-content:space-between;font-size:11px;color:var(--teal-dark);padding-top:16px;margin-top:auto}
-.overview-empty{padding:22px;border:1px solid var(--line);border-radius:14px;background:white;color:var(--ink-2)}
 .specialty-nav{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;position:sticky;top:0;z-index:10;background:#f3f6f7f5;backdrop-filter:blur(10px);padding:14px 0 17px;margin:0 0 20px;border-bottom:1px solid var(--line)}
 .specialty-nav a{display:flex;gap:8px;align-items:center;flex-shrink:0;text-decoration:none;color:var(--ink-2);padding:10px 14px;min-height:44px;border-radius:9px;border:1px solid var(--line);background:white;font-size:13px;font-weight:600}
 .specialty-nav a:hover,.specialty-nav a:focus{background:var(--navy);color:white;border-color:var(--navy)}
@@ -199,10 +191,6 @@ code{font-family:var(--mono);font-size:.85em;background:#e8eef1;border-radius:3p
 .hero-art img{width:84px;height:84px;margin:6px 0;border-radius:22px}
 .h-description{font-size:13px}
 .h-meta{margin-top:18px;font-size:11px}
-.overview-grid{gap:10px}
-.overview-card{padding:16px;min-height:172px}
-.overview-card strong{font-size:14px}
-.overview-top{font-size:10px}
 .reading-note{max-width:210px}
 .learning-grid{grid-template-columns:1fr;gap:24px;margin-top:32px}
 .blocks{padding-left:22px}
@@ -229,13 +217,6 @@ code{font-family:var(--mono);font-size:.85em;background:#e8eef1;border-radius:3p
 .section-heading{margin-bottom:14px}
 .section-heading h2{font-size:21px}
 .section-heading p{font-size:11px}
-.overview-grid{grid-template-columns:1fr;gap:9px}
-.overview-card{min-height:0;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:0 12px}
-.overview-top{grid-column:1/3;margin:0 0 7px;font-size:10px}
-.overview-card strong{font-size:14px;line-height:1.65;display:block;grid-column:1/2}
-.overview-bottom{padding:0;font-size:19px;justify-content:end;align-items:center}
-.overview-bottom span:first-child{display:none}
-.overview{margin-bottom:19px}
 .specialty-nav{margin-bottom:22px;padding:11px 0 12px;gap:7px}
 .specialty-nav a{font-size:12px;padding:10px 12px}
 .sp-title{font-size:19px}
@@ -616,11 +597,7 @@ function render(data){
   document.getElementById('h-eyebrow').textContent='DAILY BRIEFING'+(data.day?' / '+data.day.toUpperCase():'');
   document.getElementById('h-meta').innerHTML='<b id="h-date">'+esc(formatDate(data.date))+'</b>'+(data.day?'<span class="pill">'+esc(data.day)+'</span>':'')+'<span>'+data.specialtyOrder.length+'개 과목</span>';
   document.getElementById('archive-label').textContent=(data.date?data.date.replace(/-/g,'.')+' · ':'')+'지난 브리핑';
-  const active=[];data.specialtyOrder.forEach(spKey=>(data.specialties[spKey]||[]).forEach((it,i)=>{if(!isNoUpdate(it))active.push({it,spKey,i});}));
-  let html='<section class="overview" id="overview" aria-labelledby="overview-title"><div class="section-heading"><div><span class="section-kicker">TODAY’S READING</span><h2 id="overview-title">이번 회차 한눈에</h2></div><p>읽을 항목 '+active.length+' · 셀프 체크 '+data.selfCheck.length+'</p></div>';
-  if(active.length){html+='<div class="overview-grid">'+active.slice(0,3).map(({it,spKey,i},n)=>'<a class="overview-card" href="#item-'+encodeURIComponent(spKey)+'-'+i+'" data-open-item="item-'+encodeURIComponent(spKey)+'-'+i+'"><div class="overview-top"><span>'+esc((SPECIALTIES[spKey]||{}).sub||spKey)+'</span><span>'+String(n+1).padStart(2,'0')+'</span></div><strong>'+esc(it.headline.replace(/^\[(즉시|변경|참고|재등장)\]\s*/,''))+'</strong><div class="overview-bottom"><span>'+esc(CAT_ABBR[it.cat]||it.cat)+' 읽기</span><span aria-hidden="true">↗</span></div></a>').join('')+'</div>';}
-  else html+='<div class="overview-empty">이번 회차에 새로 추가된 항목이 없습니다. 아래에서 과목별 기록과 복습 자료를 확인할 수 있어요.</div>';
-  html+='</section><nav class="specialty-nav" aria-label="과목 및 복습 바로가기">'+data.specialtyOrder.map(spKey=>{const items=data.specialties[spKey]||[],n=items.filter(it=>!isNoUpdate(it)).length;return '<a href="#specialty-'+esc(spKey)+'">'+esc((SPECIALTIES[spKey]||{}).sub||spKey)+'<span class="nav-count">'+n+'</span></a>';}).join('')+(data.selfCheck.length?'<a href="#self-check">셀프 체크</a>':'')+(data.recallCard.length?'<a href="#recall-card">한 장 복습</a>':'')+'</nav>';
+  let html='<nav class="specialty-nav" aria-label="과목 및 복습 바로가기">'+data.specialtyOrder.map(spKey=>{const items=data.specialties[spKey]||[],n=items.filter(it=>!isNoUpdate(it)).length;return '<a href="#specialty-'+esc(spKey)+'">'+esc((SPECIALTIES[spKey]||{}).sub||spKey)+'<span class="nav-count">'+n+'</span></a>';}).join('')+(data.selfCheck.length?'<a href="#self-check">셀프 체크</a>':'')+(data.recallCard.length?'<a href="#recall-card">한 장 복습</a>':'')+'</nav>';
   if(data.decisionPoints.length)html+='<section class="case-section"><span class="section-kicker">DECISION POINTS</span><h2>이번 회차 핵심 포인트</h2><div class="block">'+mdBlock(data.decisionPoints.map(p=>'- '+p).join('\n'))+'</div></section>';
   data.specialtyOrder.forEach((spKey,idx)=>{
     const meta=SPECIALTIES[spKey]||{title:spKey,sub:spKey},items=data.specialties[spKey]||[],populated=items.map((it,i)=>({it,i})).filter(({it})=>!isNoUpdate(it)),empty=items.filter(isNoUpdate);
@@ -638,14 +615,22 @@ function render(data){
   }
   const content=document.getElementById('content');content.innerHTML=html;content.setAttribute('aria-busy','false');
   document.getElementById('footer').textContent=[data.title,data.author].filter(Boolean).join(' · ');
-  document.querySelectorAll('[data-open-item]').forEach(link=>link.addEventListener('click',()=>{const item=document.getElementById(link.dataset.openItem);if(item)item.open=true;}));
-  if(location.hash.startsWith('#item-')){const item=document.getElementById(location.hash.slice(1));if(item){item.open=true;requestAnimationFrame(()=>item.scrollIntoView());}}
+  // Rendering is asynchronous: restore any requested section only after it exists.
+  requestAnimationFrame(scrollToFragment);
+}
+
+function scrollToFragment(){
+  const target=document.getElementById(location.hash.slice(1));
+  if(!target)return;
+  if(target.matches('details.item'))target.open=true;
+  target.scrollIntoView({block:'start'});
 }
 
 /* Calendar and loading — same-origin first, GitHub fallback */
 const SUFFIXES=['.md','-day1.md','-day2.md','-day3.md'];
 const CAL={viewYear:0,viewMonth:0,available:new Set(),files:{},selectedDate:null};
 let loadSequence=0;
+let routeDate=new URLSearchParams(location.search).get('date');
 async function request(url,options={}){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);try{return await fetch(url,{...options,signal:controller.signal});}finally{clearTimeout(timer);}}
 async function loadDates(){
   const cacheKey='briefings-list-study';let cached=null;
@@ -665,13 +650,15 @@ async function fetchLatest(){const sorted=[...CAL.available].sort().reverse();fo
 function showLoadError(dateStr){const el=document.getElementById('content');el.setAttribute('aria-busy','false');el.innerHTML='<div class="state" role="status"><div class="state-mark">↻</div>'+(dateStr?esc(dateStr)+' 브리핑을 불러오지 못했어요.':'브리핑을 불러오지 못했어요.')+'<br>연결 상태를 확인하거나 다른 날짜를 선택해 주세요.<br><button id="retry-load" type="button">다시 불러오기</button></div>';document.getElementById('retry-load').addEventListener('click',()=>loadAndRender(dateStr));}
 async function loadAndRender(dateStr,options={}){
   const seq=++loadSequence,el=document.getElementById('content');el.setAttribute('aria-busy','true');el.innerHTML='<div class="state" role="status"><div class="state-mark">···</div>브리핑을 불러오고 있어요…</div>';
-  try{let result;if(dateStr){const md=await fetchMd(dateStr);if(md)result={date:dateStr,md};}else result=await fetchLatest();if(seq!==loadSequence)return;if(!result){showLoadError(dateStr);return;}CAL.selectedDate=result.date;CAL.available.add(result.date);const [year,month]=result.date.split('-').map(Number);CAL.viewYear=year;CAL.viewMonth=month-1;renderCal();render(parseMarkdown(result.md));if(options.history){const url=new URL(location.href);url.searchParams.set('date',result.date);url.hash='';history.pushState({},'',url);}}catch(e){if(seq===loadSequence)showLoadError(dateStr);}
+  try{let result;if(dateStr){const md=await fetchMd(dateStr);if(md)result={date:dateStr,md};}else result=await fetchLatest();if(seq!==loadSequence)return;if(!result){showLoadError(dateStr);return;}CAL.selectedDate=result.date;CAL.available.add(result.date);const [year,month]=result.date.split('-').map(Number);CAL.viewYear=year;CAL.viewMonth=month-1;renderCal();render(parseMarkdown(result.md));if(options.history){const url=new URL(location.href);url.searchParams.set('date',result.date);url.hash='';history.pushState({},'',url);routeDate=result.date;}}catch(e){if(seq===loadSequence)showLoadError(dateStr);}
 }
 function syncNetworkStatus(){document.getElementById('status-text').textContent=navigator.onLine?'매일 18:00 KST':'오프라인 · 저장된 브리핑';}
 async function init(){
   const t=kstNow();CAL.viewYear=t.getUTCFullYear();CAL.viewMonth=t.getUTCMonth();syncNetworkStatus();window.addEventListener('online',syncNetworkStatus);window.addEventListener('offline',syncNetworkStatus);
   document.getElementById('cal-prev').addEventListener('click',()=>{CAL.viewMonth--;if(CAL.viewMonth<0){CAL.viewMonth=11;CAL.viewYear--;}renderCal();});document.getElementById('cal-next').addEventListener('click',()=>{CAL.viewMonth++;if(CAL.viewMonth>11){CAL.viewMonth=0;CAL.viewYear++;}renderCal();});
-  window.addEventListener('popstate',()=>{const date=new URLSearchParams(location.search).get('date');loadAndRender(validDate(date)?date:null);});const date=new URLSearchParams(location.search).get('date');await loadDates();renderCal();await loadAndRender(validDate(date)?date:null);
+  // Native anchor navigation also fires popstate. Only a date change needs a reload.
+  window.addEventListener('popstate',()=>{const date=new URLSearchParams(location.search).get('date');if(date===routeDate)return;routeDate=date;loadAndRender(validDate(date)?date:null);});
+  window.addEventListener('hashchange',scrollToFragment);const date=new URLSearchParams(location.search).get('date');await loadDates();renderCal();await loadAndRender(validDate(date)?date:null);
 }
 init();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js',{scope:'./',updateViaCache:'none'}).catch(()=>{});});}
