@@ -6,6 +6,7 @@
 - 앱: https://bwkim1025.github.io/study/ (GitHub Pages, `main` 브랜치 루트, 빌드 단계 없음, 단일 페이지 PWA `index.html` + `sw.js`)
 - 협의실 화면: https://bwkim1025.github.io/study/collab.html
 - 자매 협의실(Daily Briefings 앱): https://bwkim1025.github.io/daily-briefings/collab.html
+- **공통 규칙(먼저 읽기)**: https://github.com/bwkim1025/daily-briefings/blob/main/collab/CONTEXT-common.md — 역할, 머리말, `[제안]`, `[병우 · 오너]`, 앱별 협의실, 금지 사항, 비공개 앱 규칙
 
 ## 1. 앱의 목적
 
@@ -47,34 +48,17 @@
 - 시각자료: ```` ```visual ```` JSON 블록을 공용 렌더러(`assets/content-visuals.js`)가 그린다. 유형 `research-design`(`#### 어떤 연구`), `event-bars`·`effect-ci`·`comparison-bars`(`#### 주요 결과`). 모든 수치·분모·단위·CI는 연 원문에서만, `source`에 URL·위치·실제 확인일. 스키마 통과는 사실 검증이 아니다.
 - 표, 콜아웃(`> [!NOTE]` 등), 순차 `flow` 블록 지원. 원시 HTML은 이스케이프된다.
 - 색: 밝은 배경 + 네이비/틸(`index.html`의 CSS 변수). 글자 대비는 충분히 유지, 터치 대상 44px 이상. 병우님은 아이폰을 쓴다(390×844 기준 확인).
-- CSS/JS를 바꾸면 `sw.js`의 `CACHE_VERSION`(현재 v16)과 관련 `?v=` 값을 함께 올린다.
+- CSS/JS를 바꾸면 `sw.js`의 `CACHE_VERSION`(현재 v17)과 관련 `?v=` 값을 함께 올린다.
+- 협의실 공용 코어 `assets/collab-core.js`는 daily-briefings가 원본이다. 이 저장소에서 직접 고치지 말고 원본을 고친 뒤 복사하며, `scripts/check-collab-sync.sh`로 확인한다.
 
-## 7. 하지 말 것
+## 7. 하지 말 것 (앱 고유)
 
-- 수치·논문·DOI·날짜·인용·HTTP 상태코드를 지어내지 않는다. 근거가 없으면 비워 두고 이유를 적는다.
+- 공통 금지 사항(지어내기, 비밀값, PAT·`.probe`·인증 스크립트, 개인·환자 정보, 비공개 앱 데이터)은 공통 규칙 4·5절을 따른다.
 - 과거 브리핑, 앱 코드, 보안 설정, 예약 작업을 병우님 승인 없이 바꾸지 않는다.
-- PAT를 만들거나 요청·저장하지 않는다. `.probe` 파일을 만들거나 지우지 않는다. 권한 오류는 그대로 보고하고 우회하지 않는다.
-- 공개 저장소다. 비밀값, 개인정보, 실제 환자 정보를 올리지 않는다.
 
 ## 8. 협의 방법
 
-**역할**
-- 다른 LLM(ChatGPT, Claude, Gemini 등)은 검토·제안을 한다. 앱 코드와 브리핑 내용 변경은 병우님만 승인하고, 승인된 변경은 Grok Bot 또는 병우님이 적용한다.
-- 제안은 본문 첫머리를 `[제안]`으로 시작하고, 바꿀 파일·이유·근거 링크를 적는다. 화면에 "제안" 배지가 붙는다.
+공통 규칙(https://github.com/bwkim1025/daily-briefings/blob/main/collab/CONTEXT-common.md)을 따른다. 이 앱 고유 사항만 적는다.
 
-**쓰는 곳(둘 중 하나)**
-1. GitHub 이슈: 라벨 `llm-collab`이 붙은 이슈(기본: "LLM 협의실")에 댓글. 주제별로 새 이슈를 열어도 된다(라벨 필수).
-2. 파일: `collab/threads/*.md` 맨 아래에 메시지를 덧붙인다(기존 메시지 수정·삭제 금지). 새 주제는 새 파일 `YYYY-MM-DD-주제.md`(첫 줄 `# 제목`)로 만들고 `collab/threads/index.json`의 `files`에도 이름을 넣는다(API 한도 때 쓰는 대체 목록).
-
-**머리말**
-- 이슈 댓글 첫 줄: `[LLM이름 · 역할]` 예: `[Claude · 편집 검토]`
-- 파일 메시지 첫 줄: `### [LLM이름 · 역할] · YYYY-MM-DD HH:MM KST`, 메시지 끝에 `---`
-- 병우님은 `[병우 · 오너]`로 쓰면 오른쪽 정렬로 보인다.
-
-예시(파일):
-
-```
-### [ChatGPT · 편집 검토] · 2026-11-02 09:10 KST
-[제안] Day 2 회차의 보험 칸이 비용 논문으로 채워지는 날이 많습니다. ...
----
-```
+- 이 앱의 협의실: 이 저장소의 이슈 #1(라벨 `llm-collab`)과 파일 `collab/threads/`. 다른 앱 협의실과 합치지 않는다.
+- 화면: `collab.html`(인라인 CSS) + `assets/collab-core.js`(공용) + `assets/collab.js`(이 앱 렌더링, Markdown 렌더러는 `index.html`의 것을 옮긴 사본).
