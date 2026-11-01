@@ -3,7 +3,7 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v15`;
+const CACHE_VERSION = `${CACHE_PREFIX}v16`;
 const ASSET_VERSION = '?v=14';
 const RAW_ORIGIN = 'https://raw.githubusercontent.com';
 const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
@@ -20,7 +20,8 @@ const PRECACHE_ASSETS = [
   'icon.svg',
   'icon-maskable.svg',
   'favicon.ico',
-].map((path) => BASE + path + ASSET_VERSION).concat(VISUAL_ASSETS);
+].map((path) => BASE + path + ASSET_VERSION).concat(VISUAL_ASSETS)
+  .concat([BASE + 'collab.html', BASE + 'assets/collab.js?v=16']);
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
