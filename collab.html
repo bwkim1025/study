@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><!-- v3.1: PC 한글 글꼴 -->
 <script>try{var t=localStorage.getItem('study-collab-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}</script>
 <style>
 :root{--bg:#f3f6f7;--panel:#fff;--panel-2:#f4f7f8;--line:#dce5e8;--ink:#172f43;--ink-2:#425b6c;--ink-3:#657b88;--navy:#132d46;--teal:#138a83;--teal-dark:#076e68;--teal-soft:#e6f5f2;--amber:#885b17;--rose:#a44348;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
@@ -87,6 +88,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--teal);outline-offse
 .msg{border-radius:20px;box-shadow:0 1px 2px rgba(28,26,25,.04)}
 .md-table th{background:var(--teal-soft);color:var(--teal-dark)}
 @media(max-width:520px){.brand{font-size:18px}.header{padding:24px 20px;border-radius:22px}}
+
+/* v3.1 · 2026-11-03 · PC 한글 글꼴(index.html과 같은 이유). 모바일은 그대로 */
+@media(min-width:1024px){:root{--sans:'Pretendard Variable',Pretendard,'Gothic A1','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif}body{text-rendering:optimizeLegibility}}
 </style>
 </head>
 <body>

@@ -3,7 +3,7 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v19`;
+const CACHE_VERSION = `${CACHE_PREFIX}v20`;
 const ASSET_VERSION = '?v=15';
 const RAW_ORIGIN = 'https://raw.githubusercontent.com';
 const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';

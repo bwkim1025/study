@@ -20,6 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><!-- v3.1: PC 한글 글꼴 -->
 <link rel="stylesheet" href="assets/content-visuals.css?v=15">
 <style>
 :root{--bg:#f3f6f7;--panel:#fff;--panel-2:#f4f7f8;--line:#dce5e8;--ink:#172f43;--ink-2:#425b6c;--ink-3:#657b88;--navy:#132d46;--teal:#138a83;--teal-dark:#076e68;--teal-soft:#e6f5f2;--amber:#885b17;--rose:#a44348;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
@@ -571,6 +572,31 @@ html{scroll-padding-top:96px}
 html.v3-deck .specialty-section,html.v3-deck .learning-grid,html.v3-deck .case-section,html.v3-deck .item,html.v3-deck .block.v3-shut{display:block!important}
 .v3-decknav,.v3-secbar,.v3-tiles,.v3-list,.v3-side,.v3-week,.topbar,.article-list::before,.article-list::after{display:none!important}
 .article-list{box-shadow:none}
+}
+
+/* ============================================================
+   v3.1 · 2026-11-03 · PC(1024px 이상) 전용 — 모바일 규칙은 손대지 않음
+   1) 글꼴: Gothic A1 웹폰트는 400/500/600/700/800 고정 굵기만 있어 650·750·550이
+      700·800·600으로 반올림되고(작은 글자가 뭉개져 보임), Windows에서 힌팅이 약함.
+      PC에서는 가변 굵기 Pretendard를 먼저 쓰고 Gothic A1을 대체로 둔다.
+   2) 넓은 화면 균형: 전체 폭 상한 1440→1680/1840, 좌·우 열과 본문 글자 크기 확대.
+   ============================================================ */
+@media(min-width:1024px){
+:root{--sans:'Pretendard Variable',Pretendard,'Gothic A1','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif}
+body{text-rendering:optimizeLegibility;font-feature-settings:"kern" 1}
+.item-headline,.sp-title,.v3-sheet-head h2,.archive>summary{letter-spacing:-.2px}
+}
+@media(min-width:1440px){
+.wrap{max-width:1680px;padding:0 40px 36px}
+.v3-layout{grid-template-columns:264px minmax(0,1fr) 360px;gap:32px}
+.block p,.block ul,.block ol{font-size:16px;line-height:1.8}
+.item-headline{font-size:25px}
+}
+@media(min-width:1800px){
+.wrap{max-width:1840px;padding:0 48px 40px}
+.v3-layout{grid-template-columns:288px minmax(0,1fr) 384px;gap:40px}
+.block p,.block ul,.block ol{font-size:17px}
+.item-headline{font-size:27px}
 }
 </style>
 </head>
