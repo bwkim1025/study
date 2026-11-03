@@ -1,6 +1,6 @@
 {
-  "name": "의학 심화 학습 (Study)",
-  "short_name": "Study",
+  "name": "땡이네 공부",
+  "short_name": "땡이네 공부",
   "description": "신장내과 + 인접 과목 — 매일 18:00 KST, 3일 사이클로 자동 작성되는 학습 브리핑",
   "lang": "ko",
   "dir": "ltr",
@@ -8,8 +8,8 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f4f7f9",
-  "theme_color": "#132d46",
+  "background_color": "#F6F5F3",
+  "theme_color": "#F6F5F3",
   "categories": [
     "medical",
     "education",
