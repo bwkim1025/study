@@ -3,7 +3,9 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v20`;
+const CACHE_VERSION = `${CACHE_PREFIX}v21`;
+// v21: 응답이 이만큼 늦으면 저장본을 먼저 보여 준다(약한 신호에서 하얀 화면으로 기다리지 않게)
+const NET_WAIT_MS = 4000;
 const ASSET_VERSION = '?v=15';
 const RAW_ORIGIN = 'https://raw.githubusercontent.com';
 const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
@@ -27,9 +29,10 @@ self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_VERSION);
     // Keep the previous worker if the shell or its visual renderer cannot load.
-    await cache.addAll([...APP_SHELL, ...VISUAL_ASSETS]);
+    // cache:'reload' — 브라우저 HTTP 캐시(GitHub Pages 10분)에 남은 옛 파일을 새 캐시에 담지 않게
+    await cache.addAll([...APP_SHELL, ...VISUAL_ASSETS].map((url) => new Request(url, { cache: 'reload' })));
     await Promise.all(PRECACHE_ASSETS.filter((url) => !VISUAL_ASSETS.includes(url)).map((url) =>
-      cache.add(url).catch((error) => {
+      cache.add(new Request(url, { cache: 'reload' })).catch((error) => {
         console.warn('[study sw] optional precache skipped', url, error.message);
       })
     ));
@@ -85,29 +88,38 @@ function unavailable(isMarkdown) {
   );
 }
 
-async function networkFirst(request, { isNavigation, isMarkdown }) {
-  try {
-    const response = await fetch(request);
-    // A host's SPA/404 fallback must never be cached or rendered as a briefing.
-    if (isMarkdown && /text\/html/i.test(response.headers.get('Content-Type') || '')) {
-      return new Response('The briefing could not be loaded as Markdown.', {
-        status: 502,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' },
-      });
-    }
-    await saveResponse(request, response);
-    return response;
-  } catch (_) {
-    const cached = await readCache(request);
-    if (cached) return cached;
-    // Only a real page navigation can use the app shell. Markdown, images,
-    // JSON and ordinary HTML fetches must never receive index.html instead.
-    if (isNavigation && !isMarkdown) {
-      const shell = await readCache(BASE + 'index.html') || await readCache(BASE);
-      if (shell) return shell;
-    }
-    return unavailable(isMarkdown);
+async function fromNetwork(request, isMarkdown) {
+  const response = await fetch(request);
+  // A host's SPA/404 fallback must never be cached or rendered as a briefing.
+  if (isMarkdown && /text\/html/i.test(response.headers.get('Content-Type') || '')) {
+    return new Response('The briefing could not be loaded as Markdown.', {
+      status: 502,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
   }
+  await saveResponse(request, response);
+  return response;
+}
+
+async function cachedFor(request, isNavigation, isMarkdown) {
+  const cached = await readCache(request);
+  if (cached) return cached;
+  // Only a real page navigation can use the app shell. Markdown, images,
+  // JSON and ordinary HTML fetches must never receive index.html instead.
+  if (isNavigation && !isMarkdown) return await readCache(BASE + 'index.html') || await readCache(BASE);
+  return undefined;
+}
+
+// v21: 네트워크 우선이되, 저장본이 있으면 NET_WAIT_MS까지만 기다린다. 늦게 온 새 응답도 끝까지 받아 저장한다(다음에 열 때 새것).
+async function networkFirst(event, request, { isNavigation, isMarkdown }) {
+  const net = fromNetwork(request, isMarkdown);
+  event.waitUntil(net.catch(() => {}));
+  const cached = await cachedFor(request, isNavigation, isMarkdown);
+  if (!cached) {
+    try { return await net; } catch (_) { return unavailable(isMarkdown); }
+  }
+  const quick = await Promise.race([net.catch(() => null), new Promise((resolve) => setTimeout(() => resolve(null), NET_WAIT_MS))]);
+  return quick || cached;
 }
 
 async function cacheFirst(request) {
@@ -134,7 +146,7 @@ self.addEventListener('fetch', (event) => {
   const isMarkdown = url.pathname.endsWith('.md');
   const isNavigation = request.mode === 'navigate' || request.destination === 'document';
   if (isNavigation || isMarkdown || url.pathname.endsWith('.html')) {
-    event.respondWith(networkFirst(request, { isNavigation, isMarkdown }));
+    event.respondWith(networkFirst(event, request, { isNavigation, isMarkdown }));
   } else {
     event.respondWith(cacheFirst(request));
   }

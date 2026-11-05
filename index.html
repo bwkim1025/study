@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <title>땡이네 공부 · 의학 심화 학습</title>
-<meta name="description" content="신장내과 + 인접 과목 — 매일 18:00 KST, 3일 사이클로 자동 작성되는 학습 브리핑">
+<meta name="description" content="신장내과 + 인접 과목 — 매일 아침, 3일 사이클로 자동 작성되는 학습 브리핑">
 <meta name="theme-color" content="#F6F5F3">
 <link rel="manifest" href="manifest.json?v=15">
 <link rel="icon" href="icon.svg?v=15" type="image/svg+xml">
@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><!-- v3.1: PC 한글 글꼴 -->
+<link rel="stylesheet" media="(min-width:1024px)" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><!-- v3.1: PC 한글 글꼴 · v3.2: PC 폭에서만 받음(휴대폰은 안 쓰는 글꼴이라 CDN이 느리면 첫 화면을 막았음) -->
 <link rel="stylesheet" href="assets/content-visuals.css?v=15">
 <style>
 :root{--bg:#f3f6f7;--panel:#fff;--panel-2:#f4f7f8;--line:#dce5e8;--ink:#172f43;--ink-2:#425b6c;--ink-3:#657b88;--navy:#132d46;--teal:#138a83;--teal-dark:#076e68;--teal-soft:#e6f5f2;--amber:#885b17;--rose:#a44348;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
@@ -347,7 +347,7 @@ button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible,[
 .v3-wd-dot{width:5px;height:5px;border-radius:50%;background:transparent}
 .v3-wd.has .v3-wd-dot{background:var(--v3-app)}
 .v3-wd.has:hover{background:var(--v3-soft)}
-.v3-wd.today{box-shadow:inset 0 0 0 1px var(--line)}
+.v3-wd.today{box-shadow:inset 0 0 0 1px var(--v3-app)} /* 2026-11-05: 선 색(1.13:1)이라 오늘 표시가 거의 안 보였음 → 달력처럼 앱 색 */
 .v3-wd:disabled,.v3-wd:disabled .v3-wd-w{color:var(--v3-mute)}
 .v3-wd[aria-pressed=true],.v3-wd[aria-pressed=true]:hover{background:var(--v3-app);color:#FFFFFF;box-shadow:none}
 .v3-wd[aria-pressed=true] .v3-wd-w{color:#FFFFFF}
@@ -598,6 +598,32 @@ body{text-rendering:optimizeLegibility;font-feature-settings:"kern" 1}
 .block p,.block ul,.block ol{font-size:17px}
 .item-headline{font-size:27px}
 }
+/* ============================================================
+   v3.2 · 2026-11-05 검토 반영. 원래 파서 스크립트는 그대로, 표시만 CSS로.
+   ============================================================ */
+/* [중간-1] 모바일 핵심 숫자 4칸 → 2×2(스크립트의 인라인 --n:4가 .v3-tiles.n4{--n:2}를 이기던 문제) */
+@media(max-width:600px){.v3-tiles.n4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* [높음-1] 오프라인일 때 모바일 머리줄: 글자 알약(151px) 대신 아이콘 하나 → 날짜가 '1…'로 잘리지 않음. 글자는 DOM에 있어 화면 읽기 프로그램은 그대로 읽음 */
+@media(max-width:1023.98px){
+.top-r.v3-offline #status-text{width:32px;min-height:32px;padding:0;margin-right:2px;justify-content:center;font-size:0;line-height:0;overflow:hidden}
+.top-r.v3-offline #status-text::before{content:'';width:18px;height:18px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M3 3l18 18M8.6 16.4a5 5 0 0 1 6.8 0M5.2 12.6a10 10 0 0 1 4.3-2.3M18.8 12.6a10 10 0 0 0-2.6-1.8M2 8.9a15 15 0 0 1 4.3-2.8M22 8.9A15 15 0 0 0 10.6 5M12 20h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M3 3l18 18M8.6 16.4a5 5 0 0 1 6.8 0M5.2 12.6a10 10 0 0 1 4.3-2.3M18.8 12.6a10 10 0 0 0-2.6-1.8M2 8.9a15 15 0 0 1 4.3-2.8M22 8.9A15 15 0 0 0 10.6 5M12 20h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+}
+/* 390px보다 좁은 폰(예: 375)에서는 아이콘으로 바꿔도 13px 모자라 'Day 3'가 잘림 → 오프라인일 때만 날짜를 18px로 */
+@media(max-width:389.98px){.topbar:has(.top-r.v3-offline) .v3-datelabel{font-size:18px}}
+/* [중간-3] 스크롤되는 띠(PC 분야 탭·왼쪽 항목 목록·모바일 칩) 안에서 초점 테가 잘림 → 안쪽에 */
+.specialty-nav a:focus-visible,.v3-li:focus-visible{outline-offset:-3px}
+@media(max-width:1023.98px){.specialty-nav a.v3-on:focus-visible{outline-color:#FFFFFF;outline-offset:-5px}}
+/* [중간-4] 넓은 PC에서 본문 한 줄이 약 72자 → 가운데 카드 폭 상한(한 줄 55자 안팎) */
+@media(min-width:1440px){.wrap{max-width:1488px}.v3-layout{grid-template-columns:264px minmax(0,720px) 360px}}
+@media(min-width:1800px){.wrap{max-width:1608px}.v3-layout{grid-template-columns:288px minmax(0,760px) 384px}}
+/* [낮음-4] 헤드라인 마지막 줄에 단어 하나만 남는 것 줄이기 */
+.item-headline{text-wrap:balance}
+/* [낮음-5] PC 셀프 체크 화면에서는 오른쪽 '문제 풀기' 카드가 같은 내용 반복 → 숨김 */
+@media(min-width:1024px){.v3-layout:has(.learning-grid.v3-on) .v3-check{display:none}}
+/* [낮음-2] 회색 설명 문구 없애기(디자인 원칙) — 탭에 개수가 이미 있음 */
+.section-heading p,.recall-sub{display:none}
+/* [낮음-3] 작은 글자의 800 굵기 → 700(한글이 작은 크기에서 속이 막혀 보임) */
+.v3-find,.v3-prog-t,.block h4,.v3-check-go,.v3-today{font-weight:700}
 </style>
 </head>
 <body>
@@ -614,10 +640,10 @@ body{text-rendering:optimizeLegibility;font-feature-settings:"kern" 1}
           <div class="calendar">
             <div class="cal-head"><span class="cal-title" id="cal-title">—</span><div class="cal-nav"><button class="cal-btn" id="cal-prev" type="button" aria-label="이전 달">‹</button><button class="cal-btn" id="cal-next" type="button" aria-label="다음 달">›</button></div></div>
             <div class="cal-grid" id="cal-grid" aria-label="브리핑 날짜 선택"></div>
-            <p class="cal-count"><span id="cal-count">—</span> · 표시된 날짜를 눌러 읽어보세요</p>
+            <p class="cal-count"><span id="cal-count">—</span></p>
           </div>
           <section class="v3-recent" aria-labelledby="v3-recent-title" hidden><h2 id="v3-recent-title">최근 브리핑</h2><ul class="v3-recent-list" id="v3-recent-list"></ul></section>
-          <button type="button" class="v3-today" id="v3-today">오늘 브리핑으로</button>
+          <button type="button" class="v3-today" id="v3-today">최신 브리핑으로</button>
         </div>
       </details>
     </div>
@@ -1281,6 +1307,94 @@ window.renderCal=function(){_renderCal.apply(this,arguments);try{if(CAL.selected
 window.loadAndRender=function(){try{loading();}catch(e){}return _load.apply(this,arguments);};
 try{placeArchive();placeNav();}catch(e){fail(e);}
 })();
+</script>
+<script>
+/* ============================================================
+ * v3.2 제안 · 별도 <script> — v3 스크립트 바로 뒤, </body> 앞에 넣는다.
+ * 원래 파서 스크립트 2개와 v3 스크립트는 한 글자도 바꾸지 않는다.
+ * 새 저장 키는 study-v3-pos 하나뿐. 기존 4개 키는 읽기만 하거나 건드리지 않는다.
+ * ============================================================ */
+(function(){
+'use strict';
+if(typeof render!=='function'||typeof loadAndRender!=='function'||typeof loadDates!=='function'||typeof CAL==='undefined')return;
+const KEY='study-v3-pos',content=document.getElementById('content');
+let pos={};try{pos=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){pos={};}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(pos));}catch(e){}};
+const setHash=id=>{try{history.replaceState(history.state,'',location.pathname+location.search+(id?'#'+id:''));}catch(e){}};
+
+/* [높음-3] 1) 그리기 직전: 주소에 #이 없으면 그 날짜에 마지막으로 보던 카드(또는 셀프 체크)로 */
+const _render=window.render;
+window.render=function(data){
+  try{const id=data&&pos[data.date];if(id&&!location.hash)setHash(id);}catch(e){}
+  return _render.apply(this,arguments);
+};
+/* 2) 지금 카드가 바뀔 때마다 날짜별로 기억하고 주소의 #도 맞춘다(새로고침·홈 화면 재실행·링크 공유 때 같은 자리) */
+let timer=0;
+new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(()=>{
+  const d=CAL.selectedDate;if(!d||!document.documentElement.classList.contains('v3-deck'))return;
+  const cur=content.querySelector('details.item.v3-cur'),rv=content.querySelector('.learning-grid.v3-on');
+  // 첫 카드면 기억·#을 지운다(다음에 열 때 맨 위 머리줄부터 보이게)
+  if(cur&&cur===content.querySelector('details.item')){if(pos[d]){delete pos[d];save();}if(location.hash)setHash('');return;}
+  const id=cur?cur.id:(rv?(location.hash==='#recall-card'?'recall-card':'self-check'):'');if(!id)return;
+  if(pos[d]!==id){pos[d]=id;Object.keys(pos).sort().reverse().slice(30).forEach(k=>{delete pos[k];});save();}
+  if(decodeURIComponent(location.hash.slice(1))!==id)setHash(id);
+},150);}).observe(content,{subtree:true,attributes:true,attributeFilter:['class']});
+
+/* [중간-2] 마지막 카드에서 '셀프 체크로'를 누르면 넘기기 줄이 사라지며 초점이 body로 떨어짐 → 셀프 체크 제목으로 */
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('#v3-next');if(!b||b.getAttribute('aria-label')!=='셀프 체크로')return;
+  setTimeout(()=>{const h=document.getElementById('self-check-title')||document.querySelector('#recall-card h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}},0);
+});
+
+/* [중간-5] 홈 화면 앱을 오래(30분+) 백그라운드에 뒀다가 다시 열면 날짜 목록을 다시 받고, 새 브리핑이 있으면 최신으로.
+   날짜를 골라 보던 중(?date=)이면 건드리지 않는다. 요청 수: 30분에 최대 1번(GitHub API) */
+let hiddenAt=0;
+document.addEventListener('visibilitychange',async()=>{
+  if(document.hidden){hiddenAt=Date.now();return;}
+  if(!hiddenAt||Date.now()-hiddenAt<30*60*1000){hiddenAt=0;return;}
+  hiddenAt=0;
+  if(new URLSearchParams(location.search).get('date'))return;
+  const before=[...CAL.available].sort().pop();
+  try{await loadDates();}catch(e){return;}
+  const latest=[...CAL.available].sort().pop();
+  if(latest&&latest!==before&&latest!==CAL.selectedDate){setHash('');loadAndRender(null);}
+});
+
+/* [중간-2 이어서] 셀프 체크 화면에서 ←를 누르면 마지막 카드로(지금은 아무 일도 안 일어남) */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='ArrowLeft'||e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+  const t=e.target;if(t&&t.closest&&t.closest('input,textarea,select,[contenteditable],.md-table-wrap,.specialty-nav,.v3-week,.cal-grid'))return;
+  if(!content.querySelector('.learning-grid.v3-on'))return;
+  const items=content.querySelectorAll('details.item');if(!items.length)return;
+  e.preventDefault();location.hash='#'+items[items.length-1].id;
+});
+
+/* [중간-6] ?date=로 없는 날짜를 열면 머리줄이 '땡이네 공부'/'—'로 비고 7일 띠·최근 브리핑이 사라짐 → 그 날짜 기준으로 다시 채우고 '최신 브리핑' 버튼 */
+function fixMissing(ds){
+  try{
+    const retry=document.getElementById('retry-load');
+    if(ds&&retry&&!content.querySelector('.specialty-section')){
+      if(CAL.selectedDate!==ds){CAL.selectedDate=ds;renderCal();}
+      if(!document.getElementById('v32-latest')&&CAL.available.size){
+        const b=document.createElement('button');b.type='button';b.id='v32-latest';b.textContent='최신 브리핑 보기';
+        b.addEventListener('click',()=>{setHash('');loadAndRender([...CAL.available].sort().pop(),{history:true});});
+        retry.after(' ',b);
+      }
+    }
+  }catch(e){}
+}
+const _load=window.loadAndRender;
+window.loadAndRender=async function(ds){
+  const r=await _load.apply(this,arguments);
+  fixMissing(ds);
+  return r;
+};
+/* 2026-11-05 확인: 첫 화면은 파서가 이 감싸기 전에 잡아 둔 원래 함수로 불러올 수 있다(경합).
+   그래서 '불러오지 못했어요' 칸(#retry-load)이 나타날 때도 주소의 ?date=로 같은 처리를 한다 */
+new MutationObserver(()=>{const ds=new URLSearchParams(location.search).get('date');if(ds&&document.getElementById('retry-load')&&!document.getElementById('v32-latest'))fixMissing(ds);})
+  .observe(content,{childList:true,subtree:true});
+})();
+
 </script>
 </body>
 </html>
