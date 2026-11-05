@@ -88,6 +88,12 @@ Do not claim an HTTP 201 when the connector returns only a commit SHA. Report th
 Report KST date, Day, commit link, read-back verification, counts/headlines by specialty and any quality or delivery gap.
 App URL: https://bwkim1025.github.io/study/
 
+## Optional briefing file index (local helper)
+
+After publishing today's `briefings/YYYY-MM-DD-dayN.md`, a local or bot runner may refresh the lightweight list with `bash scripts/build-index.sh` (writes `briefings/index.json`: date/day/file only).
+The app parser does not read this file; do not change `index.html`, `sw.js`, or `manifest.json` for it.
+Basic repo checks: `bash tests/run.sh`.
+
 ## Required evidence-led visual authoring
 
 For the main substantive paper summaries, use the bounded source-authored `visual` JSON format in docs/VISUAL-AUTHORING.md whenever a supported representation makes verified evidence easier to understand. When a day's edition has an eligible main item, include a useful visual there; interface cards alone do not meet this requirement. Prefer one or two useful visuals per main item; use three only for genuinely distinct information, within the documented ceilings. Empty categories never require figures, and visual counts are not research quotas.
