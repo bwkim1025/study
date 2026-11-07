@@ -3,8 +3,8 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v21`;
-// v21: 응답이 이만큼 늦으면 저장본을 먼저 보여 준다(약한 신호에서 하얀 화면으로 기다리지 않게)
+const CACHE_VERSION = `${CACHE_PREFIX}v22`;
+// v22: Spoqa Han Sans Neo(Regular·Medium·Bold)를 앱 셸과 함께 저장. 네트워크 대기는 v21과 같음.
 const NET_WAIT_MS = 4000;
 const ASSET_VERSION = '?v=15';
 const RAW_ORIGIN = 'https://raw.githubusercontent.com';
@@ -13,6 +13,11 @@ const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
 const APP_SHELL = [BASE, BASE + 'index.html'];
 const VISUAL_ASSETS = ['assets/content-visuals.js', 'assets/content-visuals.css']
   .map((path) => BASE + path + '?v=15');
+const FONT_ASSETS = [
+  'assets/fonts/SpoqaHanSansNeo-Regular.woff2',
+  'assets/fonts/SpoqaHanSansNeo-Medium.woff2',
+  'assets/fonts/SpoqaHanSansNeo-Bold.woff2',
+].map((path) => BASE + path);
 const PRECACHE_ASSETS = [
   'manifest.json',
   'apple-touch-icon.png',
@@ -30,7 +35,7 @@ self.addEventListener('install', (event) => {
     const cache = await caches.open(CACHE_VERSION);
     // Keep the previous worker if the shell or its visual renderer cannot load.
     // cache:'reload' — 브라우저 HTTP 캐시(GitHub Pages 10분)에 남은 옛 파일을 새 캐시에 담지 않게
-    await cache.addAll([...APP_SHELL, ...VISUAL_ASSETS].map((url) => new Request(url, { cache: 'reload' })));
+    await cache.addAll([...APP_SHELL, ...VISUAL_ASSETS, ...FONT_ASSETS].map((url) => new Request(url, { cache: 'reload' })));
     await Promise.all(PRECACHE_ASSETS.filter((url) => !VISUAL_ASSETS.includes(url)).map((url) =>
       cache.add(new Request(url, { cache: 'reload' })).catch((error) => {
         console.warn('[study sw] optional precache skipped', url, error.message);

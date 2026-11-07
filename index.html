@@ -17,13 +17,15 @@
 <meta name="apple-mobile-web-app-title" content="땡이네 공부">
 <meta name="application-name" content="땡이네 공부">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" media="(min-width:1024px)" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><!-- v3.1: PC 한글 글꼴 · v3.2: PC 폭에서만 받음(휴대폰은 안 쓰는 글꼴이라 CDN이 느리면 첫 화면을 막았음) -->
+<link rel="preload" href="assets/fonts/SpoqaHanSansNeo-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/SpoqaHanSansNeo-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/content-visuals.css?v=15">
 <style>
-:root{--bg:#f3f6f7;--panel:#fff;--panel-2:#f4f7f8;--line:#dce5e8;--ink:#172f43;--ink-2:#425b6c;--ink-3:#657b88;--navy:#132d46;--teal:#138a83;--teal-dark:#076e68;--teal-soft:#e6f5f2;--amber:#885b17;--rose:#a44348;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+/* Spoqa Han Sans Neo subset, SIL OFL — assets/fonts/LICENSE_OFL.txt. font-display:swap so the file never blocks first paint. Weights stop at Bold (700). */
+@font-face{font-family:"Spoqa Han Sans Neo";font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/SpoqaHanSansNeo-Regular.woff2") format("woff2")}
+@font-face{font-family:"Spoqa Han Sans Neo";font-style:normal;font-weight:500;font-display:swap;src:url("assets/fonts/SpoqaHanSansNeo-Medium.woff2") format("woff2")}
+@font-face{font-family:"Spoqa Han Sans Neo";font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/SpoqaHanSansNeo-Bold.woff2") format("woff2")}
+:root{--bg:#f3f6f7;--panel:#fff;--panel-2:#f4f7f8;--line:#dce5e8;--ink:#172f43;--ink-2:#425b6c;--ink-3:#657b88;--navy:#132d46;--teal:#138a83;--teal-dark:#076e68;--teal-soft:#e6f5f2;--amber:#885b17;--rose:#a44348;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:"Spoqa Han Sans Neo","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:90px}
@@ -301,13 +303,13 @@ button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{o
 
 /* ============================================================
    v3 · 2026-11-03 · Claude 디자인 — 조율안 '플래시카드'(오너 선택: 스터디 1안)
-   네 앱 공유 톤(바탕 #F6F5F3·카드 흰색·글자 #1C1A19/#67635F·선 #EAE7E3·Gothic A1) + 앱 색 보라 한 톤.
+   네 앱 공유 톤(바탕 #F6F5F3·카드 흰색·글자 #1C1A19/#67635F·선 #EAE7E3·Spoqa Han Sans Neo) + 앱 색 보라 한 톤.
    한 번에 한 장을 보여 주는 규칙은 html.v3-deck 아래에만 있다(아래 v3 스크립트가 붙임).
    스크립트가 실패하면 이 클래스가 빠져 모든 항목이 목록으로 다 보인다.
    ============================================================ */
 :root{--bg:#F6F5F3;--panel:#FFFFFF;--panel-2:#F4F2EF;--line:#EAE7E3;--ink:#1C1A19;--ink-2:#1C1A19;--ink-3:#67635F;--navy:#4B30C2;--teal:#6A4DE8;--teal-dark:#4B30C2;--teal-soft:#EEEAFE;--lilac:#E6E0FF;
   --v3-app:#6A4DE8;--v3-deep:#4B30C2;--v3-soft:#EEEAFE;--v3-seg:#ECE8F7;--v3-mute:#B4AEA8;--v3-grad:linear-gradient(135deg,#7A5CFF 0%,#4528B8 100%);
-  --sans:'Gothic A1','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+  --sans:"Spoqa Han Sans Neo","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 html{scroll-padding-top:72px;scroll-padding-bottom:100px}
 body{background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7}
 a{color:var(--v3-deep)}
@@ -575,14 +577,11 @@ html.v3-deck .specialty-section,html.v3-deck .learning-grid,html.v3-deck .case-s
 }
 
 /* ============================================================
-   v3.1 · 2026-11-03 · PC(1024px 이상) 전용 — 모바일 규칙은 손대지 않음
-   1) 글꼴: Gothic A1 웹폰트는 400/500/600/700/800 고정 굵기만 있어 650·750·550이
-      700·800·600으로 반올림되고(작은 글자가 뭉개져 보임), Windows에서 힌팅이 약함.
-      PC에서는 가변 굵기 Pretendard를 먼저 쓰고 Gothic A1을 대체로 둔다.
-   2) 넓은 화면 균형: 전체 폭 상한 1440→1680/1840, 좌·우 열과 본문 글자 크기 확대.
+   v3.1 · 2026-11-03 · PC(1024px 이상) 레이아웃. 글꼴은 모바일과 같은 Spoqa Han Sans Neo.
+   넓은 화면 균형: 전체 폭 상한 1440→1680/1840, 좌·우 열과 본문 글자 크기 확대.
    ============================================================ */
 @media(min-width:1024px){
-:root{--sans:'Pretendard Variable',Pretendard,'Gothic A1','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif}
+:root{--sans:"Spoqa Han Sans Neo","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 body{text-rendering:optimizeLegibility;font-feature-settings:"kern" 1}
 .item-headline,.sp-title,.v3-sheet-head h2,.archive>summary{letter-spacing:-.2px}
 }
@@ -624,6 +623,14 @@ body{text-rendering:optimizeLegibility;font-feature-settings:"kern" 1}
 .section-heading p,.recall-sub{display:none}
 /* [낮음-3] 작은 글자의 800 굵기 → 700(한글이 작은 크기에서 속이 막혀 보임) */
 .v3-find,.v3-prog-t,.block h4,.v3-check-go,.v3-today{font-weight:700}
+/* ============================================================
+   v3.3 · 스터디 앱 본문·제목: 모바일·PC 모두 Spoqa Han Sans Neo (굵기 700까지, 제목 Bold).
+   Gothic A1·Pretendard는 이 화면에서 쓰지 않음. 파서·v3 스크립트는 그대로.
+   협의실·협의소 메뉴 링크만 숨김. collab.html·스크립트·collab/ 기록·localStorage 키는 유지.
+   ============================================================ */
+:is(h1,h2,h3,h4,h5,h6,.brand,.archive>summary,.v3-wd-d,.v3-tile-v,.cal-title,.content-visual .cv-count,.content-visual .cv-measure,.content-visual .cv-effect-value){font-weight:700}
+b,strong{font-weight:700}
+a.collab-link,a[aria-label*="협의실"],a[aria-label*="협의소"]{display:none}
 </style>
 </head>
 <body>
