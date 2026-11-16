@@ -3,7 +3,7 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v24`;
+const CACHE_VERSION = `${CACHE_PREFIX}v27`;
 // v22: Spoqa Han Sans Neo(Regular·Medium·Bold)를 앱 셸과 함께 저장. 네트워크 대기는 v21과 같음.
 const NET_WAIT_MS = 4000;
 const ASSET_VERSION = '?v=15';
