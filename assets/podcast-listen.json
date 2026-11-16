@@ -1,0 +1,96 @@
+{
+  "kind": "study",
+  "labelPrefix": "공부",
+  "listenBase": "https://ddang-podcast.bwkim1025.workers.dev/listen",
+  "episode": {
+    "date": "2026-11-16",
+    "title": "땡이네 공부 — 2026년 11월 16일 (Day 3)",
+    "audio": "https://ddang-podcast.bwkim1025.workers.dev/listen/study/2026-11-16.mp3",
+    "items": [
+      {
+        "n": 1,
+        "id": "item-FAMILY-0",
+        "title": "수르보두타이드 심혈관 비열등 (SYNCHRONIZE-CVOT)",
+        "covered": true
+      },
+      {
+        "n": 2,
+        "id": "item-FAMILY-1",
+        "title": "레타트루타이드, 무릎 골관절염 통증과 체중",
+        "covered": true
+      },
+      {
+        "n": 3,
+        "id": "item-FAMILY-2",
+        "title": "한의 비만 진료지침 개정",
+        "covered": false
+      },
+      {
+        "n": 4,
+        "id": "item-RHEUMATOLOGY-0",
+        "title": "오비누투주맙 베타, 활동성 루푸스 (BeSolve)",
+        "covered": true
+      },
+      {
+        "n": 5,
+        "id": "item-RHEUMATOLOGY-1",
+        "title": "익세키주맙+터제파타이드, 건선관절염",
+        "covered": false
+      },
+      {
+        "n": 6,
+        "id": "item-RHEUMATOLOGY-4",
+        "title": "일루미아(틸드라키주맙) 건선관절염 FDA 승인",
+        "covered": false
+      },
+      {
+        "n": 7,
+        "id": "item-RHEUMATOLOGY-5",
+        "title": "틸드라키주맙과 덱스트로메토르판 상호작용",
+        "covered": false
+      },
+      {
+        "n": 8,
+        "id": "item-PSYCHIATRY-0",
+        "title": "강박장애 급성기 약물 네트워크 메타분석",
+        "covered": false
+      },
+      {
+        "n": 9,
+        "id": "item-PSYCHIATRY-5",
+        "title": "외래 SSRI 처방전의 잠재적 상호작용",
+        "covered": true
+      },
+      {
+        "n": 10,
+        "id": "item-GERIATRICS-0",
+        "title": "당뇨 집중 혈압과 인지 (BPROAD)",
+        "covered": true
+      },
+      {
+        "n": 11,
+        "id": "item-GERIATRICS-1",
+        "title": "노인 고관절골절, 내과 입원과 1년 사망",
+        "covered": false
+      },
+      {
+        "n": "Q1",
+        "id": "self-check",
+        "title": "오늘의 퀴즈 1 — 수르보두타이드",
+        "covered": true
+      },
+      {
+        "n": "Q2",
+        "id": "self-check",
+        "title": "오늘의 퀴즈 2 — BeSolve",
+        "covered": true
+      },
+      {
+        "n": "Q3",
+        "id": "self-check",
+        "title": "오늘의 퀴즈 3 — BPROAD",
+        "covered": true
+      }
+    ]
+  }
+}
