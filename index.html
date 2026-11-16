@@ -632,6 +632,25 @@ body{text-rendering:optimizeLegibility;font-feature-settings:"kern" 1}
 :is(h1,h2,h3,h4,h5,h6,.brand,.archive>summary,.v3-wd-d,.v3-tile-v,.cal-title,.content-visual .cv-count,.content-visual .cv-measure,.content-visual .cv-effect-value){font-weight:700}
 b,strong{font-weight:700}
 a.collab-link,a[aria-label*="협의실"],a[aria-label*="협의소"]{display:none}
+/* ============================================================
+   v3.4 · 2026-11-16 · 넓은 PC 화면(57인치 WUHD 등) 채우기. 1599px 이하는 이 블록의 영향이 전혀 없음.
+   - 2200px·3000px 이상에서 전체 폭을 단계적으로 넓히고, 가운데를 두 열로: 왼쪽 = 지금 카드(한 줄 길이 제한), 오른쪽 = 오늘 들은 내용(스크롤해도 따라옴).
+   - 색·글꼴(Spoqa Han Sans Neo)·카드 모양·파서/스크립트는 그대로. 되돌리기: 이 블록을 지우면 됨.
+   ============================================================ */
+@media(min-width:2200px){
+.wrap{max-width:2400px;padding:0 48px 40px}
+.v3-layout{grid-template-columns:300px minmax(0,1fr) 400px;gap:40px}
+#content{display:grid;grid-template-columns:minmax(0,800px) minmax(0,1fr);column-gap:40px;align-items:start}
+#content>*{grid-column:1;min-width:0}
+#content>#podcast-listen{grid-column:2;grid-row:1;position:sticky;top:84px;margin-top:16px}
+}
+@media(min-width:3000px){
+.wrap{max-width:3200px;padding:0 64px 48px}
+.v3-layout{grid-template-columns:320px minmax(0,1fr) 440px;gap:48px}
+#content{grid-template-columns:minmax(0,860px) minmax(0,1fr);column-gap:48px}
+.block p,.block ul,.block ol{font-size:18px}
+.item-headline{font-size:29px}
+}
 </style>
 </head>
 <body>
