@@ -3,7 +3,7 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v27`;
+const CACHE_VERSION = `${CACHE_PREFIX}v28`;
 // v22: Spoqa Han Sans Neo(Regular·Medium·Bold)를 앱 셸과 함께 저장. 네트워크 대기는 v21과 같음.
 const NET_WAIT_MS = 4000;
 const ASSET_VERSION = '?v=15';
@@ -13,7 +13,7 @@ const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
 const APP_SHELL = [BASE, BASE + 'index.html'];
 const VISUAL_ASSETS = ['assets/content-visuals.js', 'assets/content-visuals.css']
   .map((path) => BASE + path + '?v=15');
-const LISTEN_ASSETS = ['assets/podcast-listen.js?v=17', 'assets/podcast-listen.css?v=17', 'assets/podcast-listen.json']
+const LISTEN_ASSETS = ['assets/podcast-listen.js?v=18', 'assets/podcast-listen.css?v=18', 'assets/podcast-listen.json']
   .map((path) => BASE + path);
 const FONT_ASSETS = [
   'assets/fonts/SpoqaHanSansNeo-Regular.woff2',
