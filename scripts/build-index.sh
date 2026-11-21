@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # briefings/*.md 파일명만 모아 briefings/index.json 을 만든다.
-# 앱(index.html 파서)은 이 파일을 읽지 않는다. 일일 게시·점검용 목록이다.
+# 앱의 달력과 일일 게시 점검이 이 목록을 사용한다.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

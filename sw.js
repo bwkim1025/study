@@ -3,7 +3,7 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v28`;
+const CACHE_VERSION = `${CACHE_PREFIX}v29`;
 // v22: Spoqa Han Sans Neo(Regular·Medium·Bold)를 앱 셸과 함께 저장. 네트워크 대기는 v21과 같음.
 const NET_WAIT_MS = 4000;
 const ASSET_VERSION = '?v=15';
@@ -13,7 +13,7 @@ const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
 const APP_SHELL = [BASE, BASE + 'index.html'];
 const VISUAL_ASSETS = ['assets/content-visuals.js', 'assets/content-visuals.css']
   .map((path) => BASE + path + '?v=15');
-const LISTEN_ASSETS = ['assets/podcast-listen.js?v=18', 'assets/podcast-listen.css?v=18', 'assets/podcast-listen.json']
+const LISTEN_ASSETS = ['assets/podcast-listen.js?v=19', 'assets/podcast-listen.css?v=18', 'assets/podcast-listen.json']
   .map((path) => BASE + path);
 const FONT_ASSETS = [
   'assets/fonts/SpoqaHanSansNeo-Regular.woff2',
@@ -26,8 +26,7 @@ const PRECACHE_ASSETS = [
   'icon-192.png',
   'icon-512.png',
   'icon-512-maskable.png',
-  'icon.svg',
-  'icon-maskable.svg',
+  'icon-hero-348.webp',
   'favicon.ico',
 ].map((path) => BASE + path + ASSET_VERSION).concat(VISUAL_ASSETS)
   .concat([BASE + 'collab.html', BASE + 'assets/collab-core.js?v=17', BASE + 'assets/collab.js?v=17']);
@@ -126,7 +125,7 @@ async function networkFirst(event, request, { isNavigation, isMarkdown }) {
     try { return await net; } catch (_) { return unavailable(isMarkdown); }
   }
   const quick = await Promise.race([net.catch(() => null), new Promise((resolve) => setTimeout(() => resolve(null), NET_WAIT_MS))]);
-  return quick || cached;
+  return quick && quick.status < 500 ? quick : cached;
 }
 
 async function cacheFirst(request) {
@@ -152,7 +151,8 @@ self.addEventListener('fetch', (event) => {
 
   const isMarkdown = url.pathname.endsWith('.md');
   const isNavigation = request.mode === 'navigate' || request.destination === 'document';
-  if (isNavigation || isMarkdown || url.pathname.endsWith('.html')) {
+  const isDailyIndex = url.pathname === BASE + 'briefings/index.json' || url.pathname === BASE + 'assets/podcast-listen.json';
+  if (isNavigation || isMarkdown || isDailyIndex || url.pathname.endsWith('.html')) {
     event.respondWith(networkFirst(event, request, { isNavigation, isMarkdown }));
   } else {
     event.respondWith(cacheFirst(request));
