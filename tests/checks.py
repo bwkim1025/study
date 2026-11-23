@@ -15,7 +15,7 @@ ANCHOR = date(2026, 5, 9)
 BRIEFING_PAT = re.compile(r"^(\d{4}-\d{2}-\d{2})-day([123])\.md$")
 
 # Hard expectations (parser = 2nd <script> in index.html; v3 = 3rd)
-PARSER_BYTES, PARSER_SHA1 = 29345, "ad389101"
+PARSER_BYTES, PARSER_SHA1 = 29623, "f52625c4"  # 2026-11-23: review(핵심 정리) 항목과 기전·치료 블록 추가
 V3_BYTES, V3_SHA1 = 21184, "195f1948"
 MANIFEST_START_URL = "./"
 MANIFEST_SCOPE = "./"
