@@ -55,18 +55,19 @@ Required sections in order:
 1. `# YYYY-MM-DD (Day N)` h1 with date and Day N
 2. `> <one-line title>` blockquote (e.g., "본인 학습용 — Day 1: 신장 · 내분비/당뇨 · 심혈관")
 3. `## SPECIALTY_<KEY>` for each specialty in the day's group. **Few items, each one deep (see §4–§5 of EDITORIAL):**
-   - **NEPHROLOGY (every briefing)**: up to **3 items** — ① one `paper` that passes the §2.1 gate (if none in 6 months, revisit a core paper from the last 5 years), ② one item on hemodialysis / CRRT / vascular access / inpatient AKI·electrolytes (`paper`, `guideline`, or `review`), ③ one Tier S/A regulatory or drug item (`insurance` / `drug` / `interaction` / `safety`) — omit ③ entirely if there is none.
-   - **Every other specialty**: **1 item** — a Tier S/A `paper` or `guideline` if one exists; otherwise a `review` (mechanism and treatment of one major disease, following the order in EDITORIAL §5.1). A Tier S regulatory change may add one more item.
+   - **Every specialty in the day's group, NEPHROLOGY included: exactly 1 item**, filled in this order (EDITORIAL §5): ① a new `paper` from the last 6 months that passes the §2.1 practice-relevance gate (a practice-changing `guideline` update, Tier S/A, also counts); ② if none, **re-do a paper from past briefings** that passes §2.1 — write it in full depth as if new, re-check the source, never copy the old text, end the headline with `(다시 정리)`, and never re-do the same paper twice (search `briefings/` for existing `(다시 정리)` headlines); ③ if neither exists, a `review` (mechanism and treatment of one major disease, in the order of EDITORIAL §5.1).
+   - For NEPHROLOGY, prefer what is closest to the owner's practice: hemodialysis, CRRT, vascular access, inpatient AKI and electrolytes.
+   - **Regulatory add-on**: a Tier S change that alters prescribing right now (reimbursement, approval, safety) may follow that specialty's item as a short `insurance` / `drug` / `safety` item. At most 2 per briefing; omit if none.
    - **Never write an empty slot.** Do not write `(이번 회차 신규 사항 없음)`. If there is nothing worth including, leave the slot out.
 4. `## CASE` (optional, ~once per week — typically Day 1) — single hypothetical clinical scenario, `### <case headline>` followed by 1~2 paragraphs of natural prose. Must end with the disclaimer: "(가상 시나리오, 실제 환자 정보 아님)".
 5. `## SELF_CHECK` — 2 or 3 questions in `### Q1.` / `### Q2.` form. Body is multiple-choice options on separate lines, then `#### 답·해설` block with the correct option in **bold** and rationale.
 6. `## RECALL_CARD` — **8~10** single-line takeaway bullets
 7. `## AUTHOR` — `<Model name> · <model-id> · <YYYY-MM-DD HH:MM KST>`
 
-Total item count per cycle (hard cap **9** per briefing):
-- **Day 1**: 3 (nephrology) + 1 + 1 = **5 items**
-- **Day 2**: 3 + 1 + 1 + 1 = **6 items**
-- **Day 3**: 3 + 1 + 1 + 1 + 1 = **7 items**
+Total item count per cycle (one item per specialty, plus at most 2 regulatory add-ons):
+- **Day 1**: **3 items**
+- **Day 2**: **4 items**
+- **Day 3**: **5 items**
 
 Item structure rules:
 - One-line summary directly under each h3 (no h4 prefix needed for the summary).
@@ -103,11 +104,11 @@ For `interaction` and `safety` items: prioritize clinically actionable cross-spe
 
 ## Step 4 — Write the markdown file
 Construct the full markdown following the format spec above. Length target:
-- **Every day**: ~4,000~6,500 characters of body content. Fewer items than before, so write each one in depth.
+- **Every day**: ~4,000~6,500 characters of body content. Only 3~5 items, so write each one in depth.
 
-Per item: `paper` and `review` 600~1,000 chars of expanded body; other categories 200~400 chars.
+Per item: `paper` and `review` 1,000~1,500 chars of expanded body (results with absolute risk difference, number needed to treat, confidence interval, main adverse events and limitations; who to apply it to and who to leave out); regulatory add-ons 200~400 chars.
 
-**Repetition (EDITORIAL §3):** core topics are repeated on purpose. A revisited core paper or a `review` may cover a topic already covered — aim for roughly 1 week, 1 month and 3 months after the first time, write it shorter and from a different angle, and end the headline with `(다시 보기)`. One SELF_CHECK question should come from a core item 1 week to 3 months old. What is still not allowed is presenting the same news again as *new* without a genuine new development. Check by reading all files in `briefings/` matching the past 90 days and matching by drug/trial/agency keyword.
+**Repetition (EDITORIAL §3):** important papers from past briefings are re-done on purpose, in full depth, with `(다시 정리)` at the end of the headline. One SELF_CHECK question should come from a core item 1 week to 3 months old. What is still not allowed is presenting the same news again as *new* without a genuine new development. Check by reading all files in `briefings/` matching the past 90 days and matching by drug/trial/agency keyword.
 
 The PWA renders SPECIALTY sections in the order they appear, with each item collapsible (click to expand the body blocks). Headlines should stand alone — the user skims headlines, then taps to deep-read.
 
