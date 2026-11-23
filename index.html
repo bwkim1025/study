@@ -907,7 +907,7 @@ function parseMarkdown(md){
       flushBuffer();
       const text=h3[1].trim();
       if(mode==='SPECIALTY' && currentSp){
-        const m=text.match(/^(paper|guideline|insurance|drug|interaction|safety)\s*[:：]\s*(.+)/i);
+        const m=text.match(/^(paper|review|guideline|insurance|drug|interaction|safety)\s*[:：]\s*(.+)/i);
         currentItem={
           cat: m?m[1].toLowerCase():'paper',
           headline: m?m[2].trim():text,
@@ -932,7 +932,9 @@ function parseMarkdown(md){
       flushBuffer();
       const s=h4[1].toLowerCase().trim();
       if(currentItem){
-        if(s.includes('어떤')||s.includes('연구')||s.startsWith('why')) currentBlock='whyItMatters';
+        if(currentItem.cat==='review'&&s==='기전') currentBlock='mechanism';
+        else if(currentItem.cat==='review'&&s==='치료') currentBlock='treatment';
+        else if(s.includes('어떤')||s.includes('연구')||s.startsWith('why')) currentBlock='whyItMatters';
         else if(s.includes('초록')||s.startsWith('abstract')) currentBlock='abstract';
         else if(s.includes('주요')||s.includes('결과')||s.includes('그림')||s.includes('표')||s.startsWith('key')||s.startsWith('figure')||s.startsWith('table')) currentBlock='keyResult';
         else if(s.includes('알고리즘')||s.includes('적용')) currentBlock='algorithm';
@@ -1001,9 +1003,9 @@ function tagChip(text){
 }
 
 /* ---------- render: clinical content stays source-authored ---------- */
-const CAT_CLASS={paper:'paper',guideline:'guide',insurance:'ins',drug:'drug',interaction:'int',safety:'safe'};
-const CAT_ABBR={paper:'논문',guideline:'가이드라인',insurance:'급여',drug:'신약',interaction:'상호작용',safety:'안전성'};
-const CAT_SYMBOL={paper:'▤',guideline:'≡',insurance:'₩',drug:'+',interaction:'⇄',safety:'!'};
+const CAT_CLASS={paper:'paper',review:'guide',guideline:'guide',insurance:'ins',drug:'drug',interaction:'int',safety:'safe'};
+const CAT_ABBR={paper:'논문',review:'핵심 정리',guideline:'가이드라인',insurance:'급여',drug:'신약',interaction:'상호작용',safety:'안전성'};
+const CAT_SYMBOL={paper:'▤',review:'◎',guideline:'≡',insurance:'₩',drug:'+',interaction:'⇄',safety:'!'};
 function categoryBadge(cat){return '<span class="item-cat '+(CAT_CLASS[cat]||'paper')+'"><span class="cat-symbol" aria-hidden="true">'+(CAT_SYMBOL[cat]||'▤')+'</span>'+esc(CAT_ABBR[cat]||cat)+'</span>';}
 function isNoUpdate(it){return /^\(?이번 회차 신규 사항 없음\)?[.。]?$/.test(it.headline.trim())&&!['summary','source','whyItMatters','abstract','keyResult','algorithm','compare','context','cautions'].some(k=>it[k]?.trim());}
 function itemPreview(it){
@@ -1015,7 +1017,7 @@ function itemPreview(it){
     return line&&!/^```|^\||^>/.test(line);
   })||'';
 }
-function renderItemBlocks(it){return [['summary','요약',''],['whyItMatters','어떤 연구',''],['abstract','초록',''],['keyResult','주요 결과',''],['algorithm','적용 알고리즘','algo'],['compare','국내 vs 해외','compare'],['context','상세 내용',''],['cautions','금기 · 주의','cautions'],['source','출처','source']].filter(([key])=>it[key]).map(([key,title,cls])=>'<div class="block '+cls+'"><h4>'+title+'</h4>'+mdBlock(it[key])+'</div>').join('');}
+function renderItemBlocks(it){return [['summary','요약',''],['whyItMatters','어떤 연구',''],['abstract','초록',''],['keyResult','주요 결과',''],['mechanism','기전',''],['treatment','치료',''],['algorithm','적용 알고리즘','algo'],['compare','국내 vs 해외','compare'],['context','상세 내용',''],['cautions','금기 · 주의','cautions'],['source','출처','source']].filter(([key])=>it[key]).map(([key,title,cls])=>'<div class="block '+cls+'"><h4>'+title+'</h4>'+mdBlock(it[key])+'</div>').join('');}
 function renderArticle(it,spKey,ii){
   const id='item-'+encodeURIComponent(spKey)+'-'+ii,preview=itemPreview(it),tagged=tagChip(it.headline),headline=tagged.rest,body=renderItemBlocks(it);
   return '<details class="item" id="'+id+'" data-item-key="'+esc(spKey)+'-'+ii+'"><summary class="item-head">'+categoryBadge(it.cat)+'<div class="item-copy"><h3 class="item-headline">'+tagged.tag+esc(headline)+'</h3>'+(preview?'<div class="item-summary">'+esc(preview.replace(/\*\*|`/g,''))+'</div>':'')+'</div><span class="item-toggle" aria-hidden="true">+</span></summary><div class="blocks">'+(body||'<p class="block">이 항목은 원문에 헤드라인만 제공되어 있습니다.</p>')+'</div></details>';

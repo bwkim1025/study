@@ -45,33 +45,34 @@ Then map to the day's specialty group:
 | Day | Specialties (use these exact KEYS in `## SPECIALTY_<KEY>`) |
 |---|---|
 | 1 | NEPHROLOGY, ENDOCRINOLOGY, CARDIOLOGY |
-| 2 | INFECTIOUS, PULMONOLOGY, GASTROENTEROLOGY |
-| 3 | FAMILY, RHEUMATOLOGY, PSYCHIATRY, GERIATRICS |
+| 2 | NEPHROLOGY, INFECTIOUS, PULMONOLOGY, GASTROENTEROLOGY |
+| 3 | NEPHROLOGY, FAMILY, RHEUMATOLOGY, PSYCHIATRY, GERIATRICS |
 
 ## Step 2 — Read editorial principles (canonical format spec)
-Read `C:\Users\USER\Documents\GitHub\study\EDITORIAL-PRINCIPLES.md`. Sections 1 (6-month window), 2 (Tier S/A/B priority — CRITICAL), 3 (90-day dedup), 4 (Day 1 nephrology ×2), 5 (categories), and 7 (markdown structure) are canonical — follow them exactly. If the file disagrees with this prompt, follow the file (it may have been updated).
+Read `C:\Users\USER\Documents\GitHub\study\EDITORIAL-PRINCIPLES.md`. Sections 1 (6-month window for news, 5 years for core evidence), 2 (Tier S/A only, and the §2.1 paper gate — CRITICAL), 3 (core topics are repeated on purpose), 4 (nephrology in every briefing), 5 (slots, the `review` item, no empty slots), and 7 (markdown structure) are canonical — follow them exactly. If the file disagrees with this prompt, follow the file (it may have been updated).
 
 Required sections in order:
 1. `# YYYY-MM-DD (Day N)` h1 with date and Day N
-2. `> <one-line title>` blockquote (e.g., "본인 학습용 — Day 1: 신장×2 · 내분비/당뇨 · 심혈관")
-3. `## SPECIALTY_<KEY>` for each specialty in the day's group. **Item count per category depends on the specialty (see §4 of EDITORIAL):**
-   - **Day 1 NEPHROLOGY** (kidney is doubled): `paper × 4`, `guideline × 2`, `insurance × 2`, `drug × 2`, `interaction × 2`, `safety × 2` = **14 items** in this order
-   - **All other specialties** (Day 1 Endo/Cardio + all of Day 2/3): `paper × 2` + `guideline × 1` + `insurance × 1` + `drug × 1` + `interaction × 1` + `safety × 1` = **7 items** in this order
-   - When multiple papers, use repeated `### paper:` headings; the topics must be distinct (e.g., positive trial vs safety/negative, or core kidney vs cardiorenal).
+2. `> <one-line title>` blockquote (e.g., "본인 학습용 — Day 1: 신장 · 내분비/당뇨 · 심혈관")
+3. `## SPECIALTY_<KEY>` for each specialty in the day's group. **Few items, each one deep (see §4–§5 of EDITORIAL):**
+   - **NEPHROLOGY (every briefing)**: up to **3 items** — ① one `paper` that passes the §2.1 gate (if none in 6 months, revisit a core paper from the last 5 years), ② one item on hemodialysis / CRRT / vascular access / inpatient AKI·electrolytes (`paper`, `guideline`, or `review`), ③ one Tier S/A regulatory or drug item (`insurance` / `drug` / `interaction` / `safety`) — omit ③ entirely if there is none.
+   - **Every other specialty**: **1 item** — a Tier S/A `paper` or `guideline` if one exists; otherwise a `review` (mechanism and treatment of one major disease, following the order in EDITORIAL §5.1). A Tier S regulatory change may add one more item.
+   - **Never write an empty slot.** Do not write `(이번 회차 신규 사항 없음)`. If there is nothing worth including, leave the slot out.
 4. `## CASE` (optional, ~once per week — typically Day 1) — single hypothetical clinical scenario, `### <case headline>` followed by 1~2 paragraphs of natural prose. Must end with the disclaimer: "(가상 시나리오, 실제 환자 정보 아님)".
 5. `## SELF_CHECK` — 2 or 3 questions in `### Q1.` / `### Q2.` form. Body is multiple-choice options on separate lines, then `#### 답·해설` block with the correct option in **bold** and rationale.
 6. `## RECALL_CARD` — **8~10** single-line takeaway bullets
 7. `## AUTHOR` — `<Model name> · <model-id> · <YYYY-MM-DD HH:MM KST>`
 
-Total item count per cycle:
-- **Day 1**: 14 (nephrology) + 7 + 7 = **28 items**
-- **Day 2**: 7 + 7 + 7 = **21 items**
-- **Day 3**: 7 + 7 + 7 + 7 = **28 items**
+Total item count per cycle (hard cap **9** per briefing):
+- **Day 1**: 3 (nephrology) + 1 + 1 = **5 items**
+- **Day 2**: 3 + 1 + 1 + 1 = **6 items**
+- **Day 3**: 3 + 1 + 1 + 1 + 1 = **7 items**
 
 Item structure rules:
 - One-line summary directly under each h3 (no h4 prefix needed for the summary).
 - Expanded body uses h4 blocks. Different depth per category:
   - **paper** → `#### 어떤 연구`, `#### 초록`, `#### 주요 결과`, `#### 적용 알고리즘`, `#### 국내 vs 해외`, `#### 출처`
+  - **review** → `#### 기전`, `#### 치료`, `#### 적용 알고리즘` (what changes for reduced kidney function and dialysis patients: dose, contraindications, monitoring, when to refer), `#### 금기·주의`, `#### 출처`
   - **guideline** → `#### 어떤 연구`, `#### 적용 알고리즘`, `#### 국내 vs 해외`, `#### 출처`
   - **insurance** → `#### 적용 알고리즘`, `#### 출처` (시행일 명시 필수)
   - **drug** → `#### 적용 알고리즘`, `#### 금기·주의`, `#### 출처`
@@ -82,13 +83,13 @@ Item structure rules:
 
 ## Step 3 — Source content via web search (with Tier-based selection)
 
-**Search window:** last **6 months** (not 30 days). For each specialty × category, gather 3~5 candidate items from the priority sources below, then classify each candidate as Tier S / A / B (see EDITORIAL §2):
+**Search window:** last **6 months** for new papers, guidelines and regulatory changes. For each slot, gather 3~5 candidates and classify each as Tier S / A / B (see EDITORIAL §2). A `paper` must also pass all three gates in EDITORIAL §2.1 (journal list, study design, adult internal-medicine relevance):
 
 - **Tier S** — clinical prescribing changes today, domestic application available or imminent within 6 months. Examples: 식약처/심평원 changes, KSN/KSE updates, KDIGO/ESC/ACC major updates with Korean rollout, FDA black-box that triggers immediate Korean monitoring change.
 - **Tier A** — recommendation strength change, domestic application within 6 months. Examples: 적응증 확대, focused updates, phase 3 RCT primary positive likely to enter next guideline.
 - **Tier B** — academic value but ≥1 year before clinical impact, or no Korean adoption planned.
 
-**Slot fill rule:** For each category slot, pick the highest-Tier candidate available. Fill all S first, then A, then B. If only B candidates exist for a slot, use B; if no candidates at all, write `(이번 회차 신규 사항 없음)` and omit body.
+**Slot fill rule:** Use **Tier S and A only. Never use Tier B.** If a slot has no S/A candidate in the last 6 months: for nephrology ① revisit a core paper from the last 5 years; for nephrology ② and other specialties write a `review`; for nephrology ③ leave the slot out. Never write `(이번 회차 신규 사항 없음)`.
 
 Do **NOT** show Tier labels in the output — Tier classification is the author's selection criterion only.
 
@@ -102,12 +103,11 @@ For `interaction` and `safety` items: prioritize clinically actionable cross-spe
 
 ## Step 4 — Write the markdown file
 Construct the full markdown following the format spec above. Length target:
-- **Day 1**: ~8,000~11,000 characters of body content (28 items, kidney doubled)
-- **Day 2/3**: ~6,000~9,000 characters
+- **Every day**: ~4,000~6,500 characters of body content. Fewer items than before, so write each one in depth.
 
-Per item 200~400 chars on expanded body.
+Per item: `paper` and `review` 600~1,000 chars of expanded body; other categories 200~400 chars.
 
-**Avoid duplication (90-day window):** a topic that was covered within the past **90 days** should only re-appear if there is a genuine new development (additional reporting, policy reaction, price/dose update, regulatory action). Plain re-statement is not allowed. Check by reading all files in `briefings/` matching the past 90 days and matching by drug/trial/agency keyword.
+**Repetition (EDITORIAL §3):** core topics are repeated on purpose. A revisited core paper or a `review` may cover a topic already covered — aim for roughly 1 week, 1 month and 3 months after the first time, write it shorter and from a different angle, and end the headline with `(다시 보기)`. One SELF_CHECK question should come from a core item 1 week to 3 months old. What is still not allowed is presenting the same news again as *new* without a genuine new development. Check by reading all files in `briefings/` matching the past 90 days and matching by drug/trial/agency keyword.
 
 The PWA renders SPECIALTY sections in the order they appear, with each item collapsible (click to expand the body blocks). Headlines should stand alone — the user skims headlines, then taps to deep-read.
 
