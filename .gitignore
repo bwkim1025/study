@@ -18,3 +18,4 @@ dist/
 
 # GitHub PAT for scheduled-task auto-push (NEVER commit)
 .github-token
+__pycache__/
