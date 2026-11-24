@@ -37,9 +37,9 @@ Read recent same-Day files in full for tone and structure even when index covera
 ## Research and writing
 
 Search and open primary sources for actual publications, regulations or updates within the preceding six calendar months.
-Prioritize Tier S, then A, then B per the editorial document; compare candidates without exposing private reasoning.
+Score candidates with the 100-point importance table in the editorial document (§2.2) and show the table in each item's #### 중요도 점수 block.
 Never fabricate a title, DOI, trial, date, effect size, p-value or confidence interval. Search snippets and old briefings are not primary evidence.
-Do not fabricate three candidates merely to fill a quota. If none qualify after a real search, keep the category heading with (이번 회차 신규 사항 없음) and omit its body.
+Do not fabricate candidates merely to fill a quota. If no paper passes the hard requirements with >=55 points, write a ### review: disease item instead; never write an empty heading.
 Distinguish unavailable evidence from a verified absence of new developments.
 Avoid repeating a topic within 90 days unless a specific new development is identified and dated.
 Write in Korean for a nephrologist; mention renal adjustment, CKD/dialysis implications and nephrotoxicity when relevant.
@@ -57,17 +57,11 @@ Day 1 sections: SPECIALTY_NEPHROLOGY, SPECIALTY_ENDOCRINOLOGY, SPECIALTY_CARDIOL
 Day 2: SPECIALTY_INFECTIOUS, SPECIALTY_PULMONOLOGY, SPECIALTY_GASTROENTEROLOGY.
 Day 3: SPECIALTY_FAMILY, SPECIALTY_RHEUMATOLOGY, SPECIALTY_PSYCHIATRY, SPECIALTY_GERIATRICS.
 Use ## before each section.
-Each normal specialty has ### paper: twice, then ### guideline:, ### insurance:, ### drug:, ### interaction:, ### safety: once each.
-Day 1 NEPHROLOGY has double each category: 4/2/2/2/2/2 (14 items).
-Day totals: 28/21/28. Empty category headings count toward the required slots, but are not research findings.
+From 2026-11-25 each specialty has exactly ONE item: either ### paper: (passes the 4 hard requirements and scores >=70 on the 100-point importance table; 55-69 only as an alternate) or ### review: (one major disease: mechanism, diagnosis, treatment) when only <55 candidates exist. Day totals: 3/3/4. No empty category headings. See EDITORIAL-PRINCIPLES.md §2-§7 and docs/BRIEFING-TEMPLATE.md. (Through 2026-11-24 the old 28/21/28 slot layout applied.)
 
 Each populated item starts with a one-line summary. Expanded content MUST use #### headings, never bold-only block labels.
-paper: 어떤 연구, 초록, 주요 결과, 적용 알고리즘, 국내 vs 해외, 출처.
-guideline: 어떤 연구, 적용 알고리즘, 국내 vs 해외, 출처.
-insurance: 적용 알고리즘 (change, effective date, impact), 출처.
-drug: 적용 알고리즘 (indication and verified dose), 금기·주의, 출처.
-interaction: 적용 알고리즘 (combination, mechanism, alternative), 출처.
-safety: 적용 알고리즘 (what, why, effective date), 출처.
+paper: 중요도 점수, 어떤 연구, 초록, 주요 결과, 적용 알고리즘, 국내 vs 해외, 한계, 출처.
+review: 중요도 점수, 기전, 진단, 치료, 적용 알고리즘, 금기·주의, 출처.
 Use direct clickable Markdown source links. Headlines contain distinctive drug/trial/agency keywords where appropriate.
 
 Optional ## CASE approximately weekly, usually Day 1, explicitly fictional.

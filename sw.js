@@ -3,7 +3,8 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v29`;
+const CACHE_VERSION = `${CACHE_PREFIX}v30`;
+// v30: 2026-11-25 과목당 한 항목 형식(review 질환 정리 배지, 중요도 점수·한계·기전·진단·치료 블록) 파서 반영.
 // v22: Spoqa Han Sans Neo(Regular·Medium·Bold)를 앱 셸과 함께 저장. 네트워크 대기는 v21과 같음.
 const NET_WAIT_MS = 4000;
 const ASSET_VERSION = '?v=15';
