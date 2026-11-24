@@ -9,8 +9,10 @@ const source = fs.readFileSync(path.join(root, 'assets/podcast-listen.js'), 'utf
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 test('the audio panel escapes catalog text and survives a malformed fragment', () => {
-  // v3(골라 듣기) 재생 칸: 제목·라벨은 esc()를 거치고, 주소의 # 해석은 hashId()로만 한다.
-  assert.match(source, /esc\(it\.title \|\| ''\)/);
+  // v4(분야별 재생) 칸: 칩 라벨은 esc()를 거치고, 주소의 # 해석은 hashId()로만 한다.
+  assert.match(source, /esc\(text\)/);
+  // 번호 목록·번호 배지·여러 개 고르기는 없다.
+  assert.doesNotMatch(source, /podcast-cols|class = 'podcast-no'|data-pl-go/);
   assert.match(source, /esc\(ep\.audio\)/);
   assert.equal((source.match(/decodeURIComponent\(/g) || []).length, 1);
   const helper = source.slice(source.indexOf('const hashId ='), source.indexOf('const esc ='));
