@@ -3,7 +3,7 @@
 // globally: a sibling GitHub Pages app must keep its own offline content.
 const BASE = new URL('./', self.location.href).pathname;
 const CACHE_PREFIX = `study:${encodeURIComponent(BASE)}:`;
-const CACHE_VERSION = `${CACHE_PREFIX}v30`;
+const CACHE_VERSION = `${CACHE_PREFIX}v31`;
 // v30: 2026-11-25 과목당 한 항목 형식(review 질환 정리 배지, 중요도 점수·한계·기전·진단·치료 블록) 파서 반영.
 // v22: Spoqa Han Sans Neo(Regular·Medium·Bold)를 앱 셸과 함께 저장. 네트워크 대기는 v21과 같음.
 const NET_WAIT_MS = 4000;
@@ -14,7 +14,7 @@ const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
 const APP_SHELL = [BASE, BASE + 'index.html'];
 const VISUAL_ASSETS = ['assets/content-visuals.js', 'assets/content-visuals.css']
   .map((path) => BASE + path + '?v=15');
-const LISTEN_ASSETS = ['assets/podcast-listen.js?v=19', 'assets/podcast-listen.css?v=18', 'assets/podcast-listen.json']
+const LISTEN_ASSETS = ['assets/podcast-listen.js?v=20', 'assets/podcast-listen.css?v=19', 'assets/podcast-listen.json']
   .map((path) => BASE + path);
 const FONT_ASSETS = [
   'assets/fonts/SpoqaHanSansNeo-Regular.woff2',
