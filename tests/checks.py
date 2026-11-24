@@ -15,7 +15,7 @@ ANCHOR = date(2026, 5, 9)
 BRIEFING_PAT = re.compile(r"^(\d{4}-\d{2}-\d{2})-day([123])\.md$")
 
 # Hard expectations (parser = 2nd <script> in index.html; v3 = 3rd)
-PARSER_BYTES, PARSER_SHA1 = 29345, "ad389101"
+PARSER_BYTES, PARSER_SHA1 = 29943, "ac88deac"  # 2026-11-24: review·중요도 점수 블록
 V3_BYTES, V3_SHA1 = 21184, "195f1948"
 MANIFEST_START_URL = "./"
 MANIFEST_SCOPE = "./"
@@ -194,11 +194,103 @@ def check_briefings() -> None:
         ok("last 14 days: no missing dates")
 
 
+# 2026-11-25부터: 과목당 한 항목(paper 또는 review), 중요도 점수 블록 필수 (EDITORIAL-PRINCIPLES.md §2·§4·§5·§7)
+ONE_ITEM_FROM = date(2026, 11, 25)
+DAY_SPECIALTIES = {
+    1: ["NEPHROLOGY", "ENDOCRINOLOGY", "CARDIOLOGY"],
+    2: ["INFECTIOUS", "PULMONOLOGY", "GASTROENTEROLOGY"],
+    3: ["FAMILY", "RHEUMATOLOGY", "PSYCHIATRY", "GERIATRICS"],
+}
+REQUIRED_BLOCKS = {
+    "paper": ["중요도 점수", "어떤 연구", "초록", "주요 결과", "적용 알고리즘", "한계", "출처"],
+    "review": ["중요도 점수", "기전", "진단", "치료", "출처"],
+}
+
+
+def one_item_problems(text: str, day: int) -> list[str]:
+    """새 형식(과목당 한 항목) 회차의 구조 문제 목록. 비어 있으면 통과."""
+    problems: list[str] = []
+    lines = text.splitlines()
+    if not lines or not re.match(rf"^# \d{{4}}-\d{{2}}-\d{{2}} \(Day {day}\)\s*$", lines[0]):
+        problems.append(f"첫 줄이 '# YYYY-MM-DD (Day {day})' 형식이 아님")
+    sections = re.split(r"(?m)^## ", text)
+    specs: list[tuple[str, str]] = []
+    others: set[str] = set()
+    for sec in sections[1:]:
+        name, _, body = sec.partition("\n")
+        name = name.strip()
+        m = re.match(r"SPECIALTY[_ ](\S+)", name)
+        if m:
+            specs.append((m.group(1), body))
+        else:
+            others.add(name.split()[0] if name else "")
+    got = [s for s, _ in specs]
+    if got != DAY_SPECIALTIES[day]:
+        problems.append(f"과목 순서 {got} ≠ Day {day} {DAY_SPECIALTIES[day]}")
+    for spec, body in specs:
+        items = re.split(r"(?m)^### ", body)[1:]
+        if len(items) != 1:
+            problems.append(f"{spec}: 항목 {len(items)}개(정확히 1개여야 함)")
+            continue
+        head, _, rest = items[0].partition("\n")
+        m = re.match(r"(paper|review)\s*[:：]\s*(.+)", head.strip())
+        if not m:
+            problems.append(f"{spec}: 항목 유형이 paper/review가 아님 ({head.strip()[:40]})")
+            continue
+        kind, headline = m.group(1), m.group(2)
+        if "신규 사항 없음" in headline:
+            problems.append(f"{spec}: 빈칸 제목은 쓰지 않음")
+        labels = [x.strip() for x in re.findall(r"(?m)^#### (.+)$", rest)]
+        for need in REQUIRED_BLOCKS[kind]:
+            if need not in labels:
+                problems.append(f"{spec}: {kind}에 '#### {need}' 없음")
+        sm = re.search(r"(?ms)^#### 중요도 점수\s*$(.*?)(?=^#### |\Z)", rest)
+        if sm:
+            block = sm.group(1)
+            if "합계" not in block:
+                problems.append(f"{spec}: 중요도 점수 블록에 '합계' 없음")
+            if "필수조건" not in block:
+                problems.append(f"{spec}: 중요도 점수 블록에 '필수조건' 줄 없음")
+    for need in ("SELF_CHECK", "RECALL_CARD", "AUTHOR"):
+        if need not in others:
+            problems.append(f"'## {need}' 없음")
+    if len(re.findall(r"(?m)^### Q\d+\.", text)) != 3:
+        problems.append("SELF_CHECK 문항이 3개가 아님")
+    return problems
+
+
+def check_one_item_format() -> None:
+    tpl = ROOT / "docs" / "BRIEFING-TEMPLATE.md"
+    if not tpl.exists():
+        bad("docs/BRIEFING-TEMPLATE.md missing")
+    else:
+        m = re.search(r"```markdown\n(.*?)\n```", tpl.read_text(encoding="utf-8"), flags=re.S)
+        probs = one_item_problems(m.group(1), 3) if m else ["템플릿 코드 블록 없음"]
+        if probs:
+            bad("BRIEFING-TEMPLATE 형식: " + "; ".join(probs[:6]))
+        else:
+            ok("BRIEFING-TEMPLATE: Day 3 과목당 1항목 형식 통과")
+    checked = 0
+    for path in sorted((ROOT / "briefings").glob("*.md")):
+        m = BRIEFING_PAT.match(path.name)
+        if not m or date.fromisoformat(m.group(1)) < ONE_ITEM_FROM:
+            continue
+        checked += 1
+        probs = one_item_problems(path.read_text(encoding="utf-8"), int(m.group(2)))
+        if probs:
+            bad(f"{path.name} 과목당 1항목 형식: " + "; ".join(probs[:6]))
+    if checked:
+        ok(f"one-item format checked on {checked} briefing(s) from {ONE_ITEM_FROM}")
+    else:
+        ok(f"one-item format: no briefings from {ONE_ITEM_FROM} yet (template only)")
+
+
 def main() -> int:
     check_inline_scripts()
     check_manifest()
     check_sw()
     check_briefings()
+    check_one_item_format()
     print()
     print(f"summary: PASS={PASS} FAIL={FAIL} WARN={WARN}")
     return 1 if FAIL else 0
