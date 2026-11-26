@@ -41,7 +41,7 @@ Score candidates with the 100-point importance table in the editorial document (
 Never fabricate a title, DOI, trial, date, effect size, p-value or confidence interval. Search snippets and old briefings are not primary evidence.
 Do not fabricate candidates merely to fill a quota. If no paper passes the hard requirements with >=55 points, write a ### review: disease item instead; never write an empty heading.
 Distinguish unavailable evidence from a verified absence of new developments.
-Avoid repeating a topic within 90 days unless a specific new development is identified and dated.
+Avoid repeating a topic within 90 days unless a specific new development is identified and dated. The only exception is the designated `(다시 정리)` queue in EDITORIAL-PRINCIPLES.md §3.1 (owner approval 2026-11-26 10:35 KST): through 2026-12-14 a scheduled subject may add one rewrite slot beside its new-or-review slot. Do not copy an old briefing; reopen the source; end the headline with `(다시 정리)`. Day 2 and Day 3 have no rewrite slot until that section lists a confirmed queue.
 Write in Korean for a nephrologist; mention renal adjustment, CKD/dialysis implications and nephrotoxicity when relevant.
 Separate domestic approval/reimbursement from overseas evidence. Cite the actual supporting source next to each item.
 This is educational material, not automatic patient-specific orders. Any case is explicitly fictional and contains no patient data.
@@ -57,7 +57,7 @@ Day 1 sections: SPECIALTY_NEPHROLOGY, SPECIALTY_ENDOCRINOLOGY, SPECIALTY_CARDIOL
 Day 2: SPECIALTY_INFECTIOUS, SPECIALTY_PULMONOLOGY, SPECIALTY_GASTROENTEROLOGY.
 Day 3: SPECIALTY_FAMILY, SPECIALTY_RHEUMATOLOGY, SPECIALTY_PSYCHIATRY, SPECIALTY_GERIATRICS.
 Use ## before each section.
-From 2026-11-25 each specialty has exactly ONE item: either ### paper: (passes the 4 hard requirements and scores >=70 on the 100-point importance table; 55-69 only as an alternate) or ### review: (one major disease: mechanism, diagnosis, treatment) when only <55 candidates exist. Day totals: 3/3/4. No empty category headings. See EDITORIAL-PRINCIPLES.md §2-§7 and docs/BRIEFING-TEMPLATE.md. (Through 2026-11-24 the old 28/21/28 slot layout applied.)
+From 2026-11-25 each specialty has exactly ONE item: either ### paper: (passes the 4 hard requirements and scores >=70 on the 100-point importance table; 55-69 only as an alternate) or ### review: (one major disease: mechanism, diagnosis, treatment) when only <55 candidates exist. Day totals: 3/3/4. No empty category headings. See EDITORIAL-PRINCIPLES.md §2-§7 and docs/BRIEFING-TEMPLATE.md. (Through 2026-11-24 the old 28/21/28 slot layout applied.) From 2026-11-26 through 2026-12-14, EDITORIAL-PRINCIPLES.md §3.1 adds one `(다시 정리)` paper on the listed subject only (max two items: the unchanged new-or-review slot plus that rewrite). After the 15-paper queue, return to one item per specialty.
 
 Each populated item starts with a one-line summary. Expanded content MUST use #### headings, never bold-only block labels.
 paper: 중요도 점수, 어떤 연구, 초록, 주요 결과, 적용 알고리즘, 국내 vs 해외, 한계, 출처.

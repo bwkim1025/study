@@ -1,7 +1,8 @@
 # 브리핑 템플릿 (2026-11-25부터, 과목당 한 항목)
 
 > 아래 예시의 〈 〉 안은 자리표시다. 사실로 인용하지 않는다. `tests/checks.py`가 이 파일의 코드 블록과 2026-11-25 이후 회차의 형식을 같은 기준으로 검사한다.
-> 기준: `EDITORIAL-PRINCIPLES.md` §2(필수조건 4개·중요도 100점표), §4(3일 순환), §5(paper 또는 review), §6(항목당 음성 약 20분), §7(블록 순서).
+> 기준: `EDITORIAL-PRINCIPLES.md` §2(필수조건 4개·중요도 100점표), §3.1(2026-11-26~2026-12-14 재정리 대기열), §4(3일 순환), §5(paper 또는 review), §6(항목당 음성 약 20분), §7(블록 순서).
+> 아래 코드 블록은 평상시 예시라 과목당 항목이 하나다. 2026-11-26~2026-12-14에는 `EDITORIAL-PRINCIPLES.md` §3.1의 지정 과목에 `### paper:`를 하나 더 둔다. 헤드라인은 `(다시 정리)`로 끝나고, 블록 순서는 paper와 같다. 신규 칸의 필수조건 4개·100점표·새 진전 없는 재게재 금지는 그대로다. 이 창이 끝나면 코드 블록의 1항목으로 돌아간다.
 
 검사하는 형식:
 - `## SPECIALTY_<KEY>`가 그날 Day의 과목과 같은 순서로 있다(Day 1: NEPHROLOGY·ENDOCRINOLOGY·CARDIOLOGY / Day 2: INFECTIOUS·PULMONOLOGY·GASTROENTEROLOGY / Day 3: FAMILY·RHEUMATOLOGY·PSYCHIATRY·GERIATRICS).
