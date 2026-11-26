@@ -14,7 +14,7 @@ const RAW_BRIEFINGS = '/bwkim1025/study/main/briefings/';
 const APP_SHELL = [BASE, BASE + 'index.html'];
 const VISUAL_ASSETS = ['assets/content-visuals.js', 'assets/content-visuals.css']
   .map((path) => BASE + path + '?v=15');
-const LISTEN_ASSETS = ['assets/podcast-listen.js?v=20', 'assets/podcast-listen.css?v=19', 'assets/podcast-listen.json']
+const LISTEN_ASSETS = ['assets/podcast-listen.js?v=21', 'assets/podcast-listen.css?v=19', 'assets/podcast-listen.json']
   .map((path) => BASE + path);
 const FONT_ASSETS = [
   'assets/fonts/SpoqaHanSansNeo-Regular.woff2',
