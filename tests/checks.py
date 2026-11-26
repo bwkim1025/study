@@ -194,8 +194,13 @@ def check_briefings() -> None:
         ok("last 14 days: no missing dates")
 
 
-# 2026-11-25부터: 과목당 한 항목(paper 또는 review), 중요도 점수 블록 필수 (EDITORIAL-PRINCIPLES.md §2·§4·§5·§7)
+# 2026-11-25부터: 과목당 한 항목(paper 또는 review), 중요도 점수 블록 필수.
+# 2026-11-26~2026-12-14 회차만 EDITORIAL-PRINCIPLES.md §3.1: 그 날짜·과목 대기열의
+# 시험이고 헤드라인이 "(다시 정리)"로 끝나는 paper를 두 번째 항목으로 허용.
 ONE_ITEM_FROM = date(2026, 11, 25)
+REWRITE_FROM = date(2026, 11, 26)
+REWRITE_UNTIL = date(2026, 12, 14)
+REWRITE_MARK = "(다시 정리)"
 DAY_SPECIALTIES = {
     1: ["NEPHROLOGY", "ENDOCRINOLOGY", "CARDIOLOGY"],
     2: ["INFECTIOUS", "PULMONOLOGY", "GASTROENTEROLOGY"],
@@ -207,8 +212,99 @@ REQUIRED_BLOCKS = {
 }
 
 
-def one_item_problems(text: str, day: int) -> list[str]:
-    """새 형식(과목당 한 항목) 회차의 구조 문제 목록. 비어 있으면 통과."""
+def _trial(name: str) -> tuple[tuple[str, ...], ...]:
+    """헤드라인에 시험명이 단어로 있어야 한다. FLOWPROMOTE·ALIGNMENT처럼 더 긴 이름은 제외."""
+    return ((rf"(?<![A-Za-z0-9]){re.escape(name)}(?![A-Za-z0-9])",),)
+
+
+# 날짜 → 과목 → 대안(대안마다 정규식 전부가 맞아야 함). §3.1 표와 같은 배정.
+REWRITE_QUEUE: dict[date, dict[str, tuple[tuple[str, ...], ...]]] = {
+    date(2026, 11, 26): {
+        "NEPHROLOGY": _trial("EMPA-KIDNEY"),
+        "ENDOCRINOLOGY": _trial("SOUL"),
+        "CARDIOLOGY": _trial("FINEARTS-HF"),
+    },
+    date(2026, 11, 29): {
+        "NEPHROLOGY": _trial("FLOW"),
+        "ENDOCRINOLOGY": _trial("SURPASS-CVOT"),
+        "CARDIOLOGY": _trial("STEP-HFpEF"),
+    },
+    date(2026, 12, 2): {
+        "NEPHROLOGY": _trial("CONFIDENCE"),
+        "ENDOCRINOLOGY": (
+            (r"(?i)(?<![A-Za-z0-9])semaglutide(?![A-Za-z0-9])", r"투석"),
+            (r"세마글루타이드|세마글루티드", r"투석"),
+            (r"(?i)(?<![A-Za-z0-9])semaglutide(?![A-Za-z0-9])", r"(?i)dialysis"),
+        ),
+        "CARDIOLOGY": _trial("VESALIUS-CV"),
+    },
+    date(2026, 12, 5): {
+        "NEPHROLOGY": _trial("FIND-CKD"),
+        "ENDOCRINOLOGY": _trial("SURMOUNT-5"),
+        "CARDIOLOGY": _trial("CHAMPION-AF"),
+    },
+    date(2026, 12, 8): {
+        "NEPHROLOGY": (
+            _trial("CONVINCE")[0],
+            (r"Cochrane|코크란", r"대류"),
+        ),
+    },
+    date(2026, 12, 11): {"NEPHROLOGY": _trial("ALIGN")},
+    date(2026, 12, 14): {"NEPHROLOGY": _trial("VISIONARY")},
+}
+
+
+def heading_date(text: str) -> date | None:
+    lines = text.splitlines()
+    if not lines:
+        return None
+    m = re.match(r"^# (\d{4}-\d{2}-\d{2}) \(Day \d\)\s*$", lines[0])
+    if not m:
+        return None
+    return date.fromisoformat(m.group(1))
+
+
+def is_rewrite_headline(headline: str) -> bool:
+    return headline.rstrip().endswith(REWRITE_MARK)
+
+
+def rewrite_matches(headline: str, alts: tuple[tuple[str, ...], ...]) -> bool:
+    return any(all(re.search(pat, headline) for pat in alt) for alt in alts)
+
+
+def item_structure_problems(spec: str, raw: str) -> tuple[str | None, str, list[str]]:
+    head, _, rest = raw.partition("\n")
+    problems: list[str] = []
+    m = re.match(r"(paper|review)\s*[:：]\s*(.+)", head.strip())
+    if not m:
+        problems.append(f"{spec}: 항목 유형이 paper/review가 아님 ({head.strip()[:40]})")
+        return None, head.strip(), problems
+    kind, headline = m.group(1), m.group(2).strip()
+    if "신규 사항 없음" in headline:
+        problems.append(f"{spec}: 빈칸 제목은 쓰지 않음")
+    labels = [x.strip() for x in re.findall(r"(?m)^#### (.+)$", rest)]
+    for need in REQUIRED_BLOCKS[kind]:
+        if need not in labels:
+            problems.append(f"{spec}: {kind}에 '#### {need}' 없음")
+    sm = re.search(r"(?ms)^#### 중요도 점수\s*$(.*?)(?=^#### |\Z)", rest)
+    if sm:
+        block = sm.group(1)
+        if "합계" not in block:
+            problems.append(f"{spec}: 중요도 점수 블록에 '합계' 없음")
+        if "필수조건" not in block:
+            problems.append(f"{spec}: 중요도 점수 블록에 '필수조건' 줄 없음")
+    return kind, headline, problems
+
+
+def one_item_problems(text: str, day: int, on: date | None = None) -> list[str]:
+    """새 형식 회차의 구조 문제 목록. 비어 있으면 통과.
+
+    평상시는 과목당 1항목이다. on이 2026-11-26~2026-12-14이고 그 날짜·과목이
+    §3.1 대기열에 있을 때만 두 번째 paper를 허용한다. 그 헤드라인은
+    '(다시 정리)'로 끝나고 그 대기열 시험명이 있어야 한다.
+    """
+    if on is None:
+        on = heading_date(text)
     problems: list[str] = []
     lines = text.splitlines()
     if not lines or not re.match(rf"^# \d{{4}}-\d{{2}}-\d{{2}} \(Day {day}\)\s*$", lines[0]):
@@ -227,30 +323,25 @@ def one_item_problems(text: str, day: int) -> list[str]:
     got = [s for s, _ in specs]
     if got != DAY_SPECIALTIES[day]:
         problems.append(f"과목 순서 {got} ≠ Day {day} {DAY_SPECIALTIES[day]}")
+    queued_day = REWRITE_QUEUE.get(on, {}) if on is not None and REWRITE_FROM <= on <= REWRITE_UNTIL else {}
     for spec, body in specs:
         items = re.split(r"(?m)^### ", body)[1:]
-        if len(items) != 1:
+        queued = queued_day.get(spec)
+        if len(items) == 0 or len(items) > 2 or (len(items) == 2 and queued is None):
             problems.append(f"{spec}: 항목 {len(items)}개(정확히 1개여야 함)")
             continue
-        head, _, rest = items[0].partition("\n")
-        m = re.match(r"(paper|review)\s*[:：]\s*(.+)", head.strip())
-        if not m:
-            problems.append(f"{spec}: 항목 유형이 paper/review가 아님 ({head.strip()[:40]})")
-            continue
-        kind, headline = m.group(1), m.group(2)
-        if "신규 사항 없음" in headline:
-            problems.append(f"{spec}: 빈칸 제목은 쓰지 않음")
-        labels = [x.strip() for x in re.findall(r"(?m)^#### (.+)$", rest)]
-        for need in REQUIRED_BLOCKS[kind]:
-            if need not in labels:
-                problems.append(f"{spec}: {kind}에 '#### {need}' 없음")
-        sm = re.search(r"(?ms)^#### 중요도 점수\s*$(.*?)(?=^#### |\Z)", rest)
-        if sm:
-            block = sm.group(1)
-            if "합계" not in block:
-                problems.append(f"{spec}: 중요도 점수 블록에 '합계' 없음")
-            if "필수조건" not in block:
-                problems.append(f"{spec}: 중요도 점수 블록에 '필수조건' 줄 없음")
+        for index, raw in enumerate(items):
+            kind, headline, item_problems = item_structure_problems(spec, raw)
+            problems.extend(item_problems)
+            if index == 0 and is_rewrite_headline(headline):
+                problems.append(f"{spec}: 첫 항목은 신규 칸이라 '(다시 정리)'로 끝나면 안 됨")
+            if index == 1:
+                if kind != "paper":
+                    problems.append(f"{spec}: 다시 정리 칸은 paper여야 함")
+                elif not is_rewrite_headline(headline):
+                    problems.append(f"{spec}: 두 번째 항목 헤드라인은 '(다시 정리)'로 끝나야 함")
+                elif queued is None or not rewrite_matches(headline, queued):
+                    problems.append(f"{spec}: 두 번째 항목이 이 날짜 §3.1 대기열 시험이 아님")
     for need in ("SELF_CHECK", "RECALL_CARD", "AUTHOR"):
         if need not in others:
             problems.append(f"'## {need}' 없음")
@@ -276,13 +367,263 @@ def check_one_item_format() -> None:
         if not m or date.fromisoformat(m.group(1)) < ONE_ITEM_FROM:
             continue
         checked += 1
-        probs = one_item_problems(path.read_text(encoding="utf-8"), int(m.group(2)))
+        on = date.fromisoformat(m.group(1))
+        probs = one_item_problems(path.read_text(encoding="utf-8"), int(m.group(2)), on)
         if probs:
-            bad(f"{path.name} 과목당 1항목 형식: " + "; ".join(probs[:6]))
+            bad(f"{path.name} 과목당 항목 형식: " + "; ".join(probs[:6]))
     if checked:
         ok(f"one-item format checked on {checked} briefing(s) from {ONE_ITEM_FROM}")
     else:
         ok(f"one-item format: no briefings from {ONE_ITEM_FROM} yet (template only)")
+    check_rewrite_examples()
+
+
+_PAPER_BODY = """한 줄.
+
+#### 중요도 점수
+| 항목 | 배점 | 점수 | 근거 |
+|---|---|---|---|
+| 진료 결정 변화 | 25 | 20 | 예시 |
+| 근거 수준 | 20 | 18 | 예시 |
+| 가이드라인 반영 | 15 | 10 | 예시 |
+| 국내 적용성 | 15 | 12 | 예시 |
+| 내 환자군 빈도 | 15 | 10 | 예시 |
+| 출처 확정성 | 10 | 8 | 예시 |
+| **합계** | **100** | **78** | 예시 |
+
+필수조건: 예시
+
+#### 어떤 연구
+예시
+#### 초록
+예시
+#### 주요 결과
+예시
+#### 적용 알고리즘
+예시
+#### 한계
+예시
+#### 출처
+예시
+"""
+
+_REVIEW_BODY = """한 줄.
+
+#### 중요도 점수
+| **합계** | **100** | **40** | 질환 정리 |
+
+필수조건: 해당 없음(질환 정리)
+
+#### 기전
+예시
+#### 진단
+예시
+#### 치료
+예시
+#### 출처
+예시
+"""
+
+
+def _sample_edition(on: date, day: int, sections: list[tuple[str, list[tuple[str, str]]]]) -> str:
+    parts = [f"# {on.isoformat()} (Day {day})", "> 예시", ""]
+    for spec, items in sections:
+        parts.append(f"## SPECIALTY_{spec}")
+        for kind, headline in items:
+            parts.append(f"### {kind}: {headline}")
+            parts.append(_PAPER_BODY if kind == "paper" else _REVIEW_BODY)
+    parts.extend(["## SELF_CHECK", "### Q1. 예시", "### Q2. 예시", "### Q3. 예시", "## RECALL_CARD", "## AUTHOR", ""])
+    return "\n".join(parts)
+
+
+def _day1(
+    on: date,
+    nephro: list[tuple[str, str]],
+    endo: list[tuple[str, str]],
+    cardio: list[tuple[str, str]],
+) -> str:
+    return _sample_edition(
+        on,
+        1,
+        [("NEPHROLOGY", nephro), ("ENDOCRINOLOGY", endo), ("CARDIOLOGY", cardio)],
+    )
+
+
+def _expect_ok(label: str, text: str, day: int, on: date) -> None:
+    probs = one_item_problems(text, day, on)
+    if probs:
+        bad(f"{label}: " + "; ".join(probs[:4]))
+    else:
+        ok(label)
+
+
+def _expect_has(label: str, text: str, day: int, on: date, needle: str) -> None:
+    probs = one_item_problems(text, day, on)
+    if any(needle in p for p in probs):
+        ok(label)
+    else:
+        bad(f"{label}: 기대 {needle!r}, 실제 {probs[:4]}")
+
+
+def _insert_rewrite(text: str, specialty: str, headline: str) -> str:
+    """과목에 항목이 하나일 때만 paper 재정리 칸을 섹션 끝에 붙인 사본을 돌려준다."""
+    pattern = rf"(?ms)^(## SPECIALTY_{specialty}\b.*?)(?=^## )"
+    found = re.search(pattern, text)
+    if not found:
+        raise RuntimeError(f"섹션 없음: {specialty}")
+    if len(re.findall(r"(?m)^### ", found.group(1))) != 1:
+        return text
+    block = f"### paper: {headline}\n{_PAPER_BODY}"
+    return text[: found.end(1)] + block + text[found.end(1) :]
+
+
+def check_rewrite_examples() -> None:
+    """§3.1 형태가 통과하고, 대기열 밖·표기 오류는 거절되는지 예시로 확인한다."""
+    new_n = ("paper", "신규 신장 논문 (KI 2026-11)")
+    new_e = ("review", "부신기능저하 — 성인 하이드로코르티손")
+    new_c = ("paper", "신규 심혈관 논문 (NEJM 2026-11)")
+    nov26 = date(2026, 11, 26)
+    edition = _day1(
+        nov26,
+        [new_n, ("paper", "EMPA-KIDNEY, 신장 보호 (NEJM 2023) (다시 정리)")],
+        [new_e, ("paper", "SOUL, 경구 semaglutide (NEJM 2025) (다시 정리)")],
+        [new_c, ("paper", "FINEARTS-HF, finerenone (NEJM 2024) (다시 정리)")],
+    )
+    _expect_ok("예시 2026-11-26: EMPA-KIDNEY·SOUL·FINEARTS-HF (다시 정리) 통과", edition, 1, nov26)
+    _expect_ok("예시 2026-11-26: 재정리 없이 신규 1항목 유지", _day1(nov26, [new_n], [new_e], [new_c]), 1, nov26)
+    _expect_has(
+        "예시: 대기열 밖 시험은 거절",
+        _day1(nov26, [new_n, ("paper", "DAPA-CKD (다시 정리)")], [new_e], [new_c]),
+        1,
+        nov26,
+        "대기열 시험이 아님",
+    )
+    _expect_has(
+        "예시: '(다시 정리)'로 끝나지 않으면 거절",
+        _day1(nov26, [new_n, ("paper", "EMPA-KIDNEY (다시 정리) 메모")], [new_e], [new_c]),
+        1,
+        nov26,
+        "끝나야 함",
+    )
+    _expect_has(
+        "예시: 항목 3개는 거절",
+        _day1(
+            nov26,
+            [new_n, ("paper", "EMPA-KIDNEY (다시 정리)"), ("paper", "EMPA-KIDNEY 추가 (다시 정리)")],
+            [new_e],
+            [new_c],
+        ),
+        1,
+        nov26,
+        "항목 3개",
+    )
+    _expect_has(
+        "예시: 재정리만 있고 신규 칸이 없으면 거절",
+        _day1(nov26, [("paper", "EMPA-KIDNEY (다시 정리)")], [new_e], [new_c]),
+        1,
+        nov26,
+        "신규 칸",
+    )
+    _expect_has(
+        "예시: 재정리를 첫 항목에 두면 거절",
+        _day1(nov26, [("paper", "EMPA-KIDNEY (다시 정리)"), new_n], [new_e], [new_c]),
+        1,
+        nov26,
+        "신규 칸",
+    )
+    _expect_has(
+        "예시: 다시 정리 칸이 review이면 거절",
+        _day1(nov26, [new_n, ("review", "EMPA-KIDNEY (다시 정리)")], [new_e], [new_c]),
+        1,
+        nov26,
+        "paper여야 함",
+    )
+    _expect_has(
+        "예시: 2026-11-25는 과목당 1항목",
+        edition,
+        1,
+        date(2026, 11, 25),
+        "정확히 1개여야 함",
+    )
+    day2 = _sample_edition(
+        date(2026, 11, 27),
+        2,
+        [
+            ("INFECTIOUS", [new_n, ("paper", "EMPA-KIDNEY (다시 정리)")]),
+            ("PULMONOLOGY", [new_c]),
+            ("GASTROENTEROLOGY", [new_e]),
+        ],
+    )
+    _expect_has("예시: Day 2 회차는 재정리 칸 없음", day2, 2, date(2026, 11, 27), "정확히 1개여야 함")
+    _expect_has(
+        "예시: FLOWPROMOTE는 FLOW 대기열이 아님",
+        _day1(
+            date(2026, 11, 29),
+            [new_n, ("paper", "FLOWPROMOTE (다시 정리)")],
+            [("paper", "SURPASS-CVOT (다시 정리)")],
+            [("paper", "STEP-HFpEF (다시 정리)")],
+        ),
+        1,
+        date(2026, 11, 29),
+        "대기열 시험이 아님",
+    )
+    _expect_ok(
+        "예시 2026-12-02: 투석 당뇨 semaglutide 관찰연구",
+        _day1(
+            date(2026, 12, 2),
+            [new_n, ("paper", "CONFIDENCE (다시 정리)")],
+            [new_e, ("paper", "투석 당뇨 semaglutide 관찰연구 (다시 정리)")],
+            [new_c, ("paper", "VESALIUS-CV (다시 정리)")],
+        ),
+        1,
+        date(2026, 12, 2),
+    )
+    _expect_ok(
+        "예시 2026-12-08: CONVINCE와 Cochrane 대류투석",
+        _day1(
+            date(2026, 12, 8),
+            [new_n, ("paper", "Cochrane 대류투석과 CONVINCE (다시 정리)")],
+            [new_e],
+            [new_c],
+        ),
+        1,
+        date(2026, 12, 8),
+    )
+    _expect_ok(
+        "예시 2026-12-08: Cochrane 대류투석만 적어도 같은 대기열",
+        _day1(date(2026, 12, 8), [new_n, ("paper", "Cochrane 대류투석 (다시 정리)")], [new_e], [new_c]),
+        1,
+        date(2026, 12, 8),
+    )
+    _expect_has(
+        "예시 2026-12-08: 내분비 재정리 칸은 없음",
+        _day1(date(2026, 12, 8), [new_n], [new_e, ("paper", "SOUL (다시 정리)")], [new_c]),
+        1,
+        date(2026, 12, 8),
+        "정확히 1개여야 함",
+    )
+    _expect_has(
+        "예시: 2026-12-15 이후는 과목당 1항목",
+        _day1(date(2026, 12, 17), [new_n, ("paper", "VISIONARY (다시 정리)")], [new_e], [new_c]),
+        1,
+        date(2026, 12, 17),
+        "정확히 1개여야 함",
+    )
+
+    live = ROOT / "briefings" / "2026-11-26-day1.md"
+    if not live.exists():
+        bad("예시: briefings/2026-11-26-day1.md 없음")
+        return
+    augmented = live.read_text(encoding="utf-8")
+    augmented = _insert_rewrite(augmented, "NEPHROLOGY", "EMPA-KIDNEY, 신장 보호 (다시 정리)")
+    augmented = _insert_rewrite(augmented, "ENDOCRINOLOGY", "SOUL, 경구 semaglutide (다시 정리)")
+    augmented = _insert_rewrite(augmented, "CARDIOLOGY", "FINEARTS-HF, finerenone (다시 정리)")
+    _expect_ok(
+        "예시: 오늘 11/26 파일에 EMPA-KIDNEY·SOUL·FINEARTS-HF (다시 정리)를 붙인 형태",
+        augmented,
+        1,
+        nov26,
+    )
 
 
 def main() -> int:
